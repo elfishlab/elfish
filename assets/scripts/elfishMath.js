@@ -50,8 +50,8 @@ function newCarleStrub(arr) {
     var t = newT(arr);
     var x = X(arr);
     var k = arr.length;
-    var hatN = t-1;
-    
+    var hatN = t;
+
     // console.log("newCS N:   " + hatN);
     // console.log("newCS t:   " + t);
     // console.log("newCS x:   " + x);
