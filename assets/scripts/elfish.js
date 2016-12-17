@@ -481,7 +481,7 @@ function run () {
             var specieId = $(e.currentTarget).data("specie-id");
             efGUI.showSpecie(specieId);
         });
-    
+
     $( ".app")
         .delegate(".group-plot", "click", function (e) {
             $(e.currentTarget).find("canvas").toggle(200);
