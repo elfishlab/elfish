@@ -297,7 +297,13 @@ function getEstimateStringCS(arr) {
 
 
 
-
+function isConfident(arr, confidence) {
+    if (arr.length < 2)
+        return false;
+    var q = estimate(arr);
+    var cf = newConfidenceInterval(arr);
+    return (cf/q) <= confidence;
+}
 
 
 

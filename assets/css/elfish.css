@@ -191,3 +191,7 @@ input[type="number"] {
     max-width: 300px;
     transition: .5s;
 }
+
+.confident {
+    background: #aea;
+}
