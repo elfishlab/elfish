@@ -348,6 +348,14 @@ function recomputeValues(s,g,e) {
             } else {
                 document.getElementById("est" + postfix).className = "est";
             }
+
+            <!-- marking effort boxes as green when below 0.01 confidence -->
+            var effortboxId = "effort-" + s + "-" + g + "-" + e;
+            var effortbox = document.getElementById(effortboxId);
+            if (isConfident(arr, 0.01))
+                effortbox.className = "effort confident";
+            else
+                effortbox.className = "effort";
         }
     }
     store();
