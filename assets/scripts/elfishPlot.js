@@ -29,13 +29,18 @@ function updatePlot(sp, gr) {
 
     if (plotIsValidIndices(sp, gr)) {
         var efforts = window.elfish.species[sp].groups[gr].efforts;
-            for (var i = 1; i < efforts.length; i++) {
+            for (var i = 0; i < efforts.length; i++) {
             arr.push(efforts[i].value);
             labels.push("e" + (i+1)); // effort2, effort3, etc
             est.push(estimate(arr));
             cf.push(confidence(arr));
         }
     }
+    // we don't plot the first effort since it has no estimate
+    arr.shift();
+    labels.shift();
+    est.shift();
+    cf.shift();
 
     var chartctx = plotFindCanvas(sp, gr);
     if (chartctx == null) {
