@@ -25,11 +25,13 @@ function updatePlot(sp, gr) {
     var arr = [];
     var est = [];
     var cf = [];
+    var labels = [];
 
     if (plotIsValidIndices(sp, gr)) {
         var efforts = window.elfish.species[sp].groups[gr].efforts;
-            for (var i = 0; i < efforts.length; i++) {
+            for (var i = 1; i < efforts.length; i++) {
             arr.push(efforts[i].value);
+            labels.push("e" + (i+1)); // effort2, effort3, etc
             est.push(estimate(arr));
             cf.push(confidence(arr));
         }
@@ -44,10 +46,10 @@ function updatePlot(sp, gr) {
     var myChart = new Chart(chartctx, {
         type: 'lineError',
         data: {
-            labels: arr,
+            labels: labels,
             datasets: [{
                 label: plotGetName(sp, gr),
-                data: arr,
+                data: est,
                 error: cf,
                 errorDir : "both",
                 errorStrokeWidth : 1,
