@@ -327,32 +327,35 @@ function recomputeValues(s,g,e) {
             }
             
 
-            var estString = "";
-            if (window.elfish.method == "zippin")
-                estString = getEstimateString(arr);
-            else
-                estString = getEstimateStringCS(arr);
+            var estString = ElfishMathEstimateString(arr,window.elfish.method);
             console.log("picked method " + window.elfish.method + " :::: " + estString);
 
             document.getElementById("est" + postfix).innerHTML =
                 "N̂ =" + estString;
-            
-            document.getElementById("ke" + postfix).innerHTML =
-                "CI/N̂ =" + getCIslashE(arr);
-            
-            document.getElementById("te" + postfix).innerHTML =
-                "T/N̂ =" + getTE(arr);
-            
+
+            var ciSlashE = "---";
+            var ciSlashEval = ElfishMathCIslashE(arr, window.elfish.method);
+            if (ciSlashEval >= 0)
+                ciSlashE = ciSlashEval.toFixed(3);
+            document.getElementById("ke" + postfix).innerHTML = "CI/N̂ =" + ciSlashE;
+
+            // T / E
+            var tSlashE = "---";
+            var tSlashEval = ElfishMathTSlashE(arr, window.elfish.method);
+            if (tSlashEval >= 0)
+                tSlashE = tSlashEval.toFixed(3);
+            document.getElementById("te" + postfix).innerHTML = "T/N̂ =" + tSlashE;
+
             if (estString.indexOf("*") >= 0) {
                 document.getElementById("est" + postfix).className = "est red";
             } else {
                 document.getElementById("est" + postfix).className = "est";
             }
 
-            <!-- marking effort boxes as green when below 0.01 confidence -->
+            // marking effort boxes as green when below 0.01 confidence
             var effortboxId = "effort-" + s + "-" + g + "-" + e;
             var effortbox = document.getElementById(effortboxId);
-            if (isConfident(arr, 0.01))
+            if (ElfishMathIsConfident(arr, 0.01, window.elfish.method))
                 effortbox.className = "effort confident";
             else
                 effortbox.className = "effort";
@@ -518,11 +521,7 @@ function updateSummary (sp,gr) {
         }
     }
 
-    var est = "";
-    if (window.elfish.method == "zippin")
-        est = getEstimateString(arr);
-    else
-        est = getEstimateStringCS(arr);
+    var est = ElfishMathEstimateString(arr, window.elfish.method);
     console.log("SUMMARY method " + window.elfish.method + ": " + est);
     
     var data = "<p>Efforts = " + numOfEfforts + "</p>";
