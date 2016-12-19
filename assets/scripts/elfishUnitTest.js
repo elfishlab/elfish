@@ -22,6 +22,14 @@ function errorString(name, data, expected, actual) {
     return r;
 }
 
+function unitTestAssertEqual(exp, act) {
+    if (exp != act) {
+        var s = errorString("Equals", "exp==act", exp, act);
+        console.log(s);
+        console.error(s);
+    }
+}
+
 function unitTestCarleStrub(arr, hatN) {
     // testing C&S
     var cs = ElfishMathEstimate(arr, "cs");
@@ -168,6 +176,7 @@ unitTestCarleStrub(arr, hatNCS);
 //
 arr = [20];
 for (var viginti = 0; viginti < 10; viginti++) {
+    arr.push(0);
     unitTestZippin(arr, 20);
     unitTestCarleStrub(arr, 20);
     unitTestConfidenceInterval(arr, 0.0, "cs");
@@ -202,3 +211,25 @@ unitTestZippin(laks, laksZ);
 unitTestZippin(orre, orreZ);
 unitTestConfidenceInterval(laks, laksZci, "zippin");
 unitTestConfidenceInterval(orre, orreZci, "zippin");
+
+
+
+// testing other functions
+arr = [];
+var pop = ElfishMathPopulated(arr);
+unitTestAssertEqual(false,pop);
+arr = [20];
+pop = ElfishMathPopulated(arr);
+unitTestAssertEqual(false,pop);
+arr = [20,""];
+pop = ElfishMathPopulated(arr);
+unitTestAssertEqual(false,pop);
+arr = [20,"",1];
+pop = ElfishMathPopulated(arr);
+unitTestAssertEqual(true,pop);
+arr = [20,0,1];
+pop = ElfishMathPopulated(arr);
+unitTestAssertEqual(true,pop);
+arr = [0,0];
+pop = ElfishMathPopulated(arr);
+unitTestAssertEqual(true,pop);

@@ -8,6 +8,8 @@
 // bool   ElfishMathIsConfident (data, confidence, meth)
 
 function ElfishMathConfidenceInterval(arr, meth) {
+    if (!ElfishMathPopulated(arr)) return -1;
+
     var hatN = -1;
     if (meth == "zippin")
         hatN = ElfishMathZippin(arr);
@@ -39,6 +41,7 @@ function ElfishMathConfidenceInterval(arr, meth) {
  * q = (1-p) (BV4)
  */
 function ElfishMathEstimate(arr, meth) {
+    if (!ElfishMathPopulated(arr)) return -1;
     if (meth == "zippin")
         return ElfishMathZippin(arr);
     else
@@ -50,9 +53,8 @@ function ElfishMathEstimate(arr, meth) {
  * Gets string 200 &pm; 59*
  */
 function ElfishMathEstimateString(arr, meth) {
-    if (arr.length < 2) {
-	    return "---";
-    }
+    if (!ElfishMathPopulated(arr)) return "---";
+
     var est = -1; 
     var cf  = -1; 
     if (meth == "zippin") {
@@ -75,8 +77,7 @@ function ElfishMathEstimateString(arr, meth) {
  * Returns whether cf/est <= confidence for given data and method.
  */
 function ElfishMathIsConfident(arr, confidence, meth) {
-    if (arr.length < 2)
-        return false;
+    if (!ElfishMathPopulated(arr)) return false;
     var q = ElfishMathEstimate(arr, meth);
     var cf = ElfishMathConfidenceInterval(arr, meth);
     return (cf/q) <= confidence;
@@ -88,7 +89,7 @@ function ElfishMathIsConfident(arr, confidence, meth) {
  *
  */
 function ElfishMathCIslashE(arr, meth) {
-    if (arr.length < 2) return -1;
+    if (!ElfishMathPopulated(arr)) return -1;
 
     // todo precomputed
     var q  = ElfishMathEstimate(arr, meth);
@@ -104,7 +105,7 @@ function ElfishMathCIslashE(arr, meth) {
  *
  */
 function ElfishMathTSlashE(arr, meth) {
-    if (arr.length < 2) return -1;
+    if (!ElfishMathPopulated(arr)) return -1;
 
     var t = ElfishMathSum(arr);
     var q = ElfishMathEstimate(arr, meth);
@@ -160,6 +161,7 @@ function ElfishMathT(arr) {
  *  Returns -1 if no convergence in 1M steps.
  */
 function ElfishMathZippin(arr) {
+    if (!ElfishMathPopulated(arr)) return -1;
     var t = ElfishMathT(arr);
     var x = ElfishMathX(arr);
     var k = arr.length;
@@ -198,6 +200,8 @@ function ElfishMathCarleStrubEq(t, hatN, k, x) {
  *  Returns -1 if no convergence in 1M steps.
  */
 function ElfishMathCarleStrub(arr) {
+    if (!ElfishMathPopulated(arr)) return -1;
+
     var t = ElfishMathT(arr);
     var x = ElfishMathX(arr);
     var k = arr.length;
@@ -218,6 +222,8 @@ function ElfishMathCarleStrub(arr) {
  *  Pre estimate used to bootstrap Zippin.
  */
 function ElfishMathPreEstimate(arr, hatN) {
+    if (!ElfishMathPopulated(arr)) return -1;
+
     var t = ElfishMathT(arr);
     var x = ElfishMathX(arr);
     var k = arr.length;
@@ -236,6 +242,8 @@ function ElfishMathPreEstimate(arr, hatN) {
  *  This is used together with estimate to give the confidence.
  */
 function ElfishMathCatch(arr,hatN) {
+    if (!ElfishMathPopulated(arr)) return -1;
+
     var t = ElfishMathT(arr);
     var x = ElfishMathX(arr);
     var k = arr.length;
@@ -246,6 +254,16 @@ function ElfishMathCatch(arr,hatN) {
     return ret;
 }
 
+function ElfishMathPopulated(arr) {
+    var c = 0;
+    for (var i = 0; i < arr.length; i++) {
+        if (Number.isInteger(arr[i]))
+            c+=1;
+        if (c > 1)
+            return true;
+    }
+    return false;
+}
 
 /**
  * Returns the sum of the values in arr.
