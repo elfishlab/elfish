@@ -164,6 +164,19 @@ unitTestCarleStrub(arr, hatNCS);
 
 
 //
+// 6 --- testing 20, 0, 0, ...
+//
+arr = [20];
+for (var viginti = 0; viginti < 10; viginti++) {
+    console.log(arr);
+    unitTestZippin(arr, 20);
+    unitTestCarleStrub(arr, 20);
+    unitTestConfidenceInterval(arr, 0.0, "cs");
+    unitTestConfidenceInterval(arr, 0.0, "zippin");
+}
+
+
+//
 // ny data fra Marius, 20.07.2015
 //
 
