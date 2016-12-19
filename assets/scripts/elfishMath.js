@@ -163,7 +163,7 @@ function ElfishMathZippin(arr) {
     var t = ElfishMathT(arr);
     var x = ElfishMathX(arr);
     var k = arr.length;
-    var hatN = t-1;
+    var hatN = t;
     for (var i = 0; i < 1000000; i++) {
         var lhs = hatN + i;
         var rhs = ElfishMathPreEstimate(arr, lhs);
