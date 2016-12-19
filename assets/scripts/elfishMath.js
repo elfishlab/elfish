@@ -8,6 +8,8 @@
 // bool   ElfishMathIsConfident (data, confidence, meth)
 
 function ElfishMathConfidenceInterval(arr, meth) {
+    if (!ElfishUtilPopulated(arr)) return -1;
+
     var hatN = -1;
     if (meth == "zippin")
         hatN = ElfishMathZippin(arr);
@@ -16,9 +18,9 @@ function ElfishMathConfidenceInterval(arr, meth) {
     var p = ElfishMathCatch(arr,hatN);
     var q = 1 - p;
     var k = arr.length;
-    
+
     var qk = Math.pow(q,k);
-    
+
     var teller = hatN * (1 - qk) * qk;
     var nevnerA = Math.pow(1 - qk, 2);
     var nevnerB = Math.pow(p*k, 2) * Math.pow(q,k-1);
@@ -39,6 +41,7 @@ function ElfishMathConfidenceInterval(arr, meth) {
  * q = (1-p) (BV4)
  */
 function ElfishMathEstimate(arr, meth) {
+    if (!ElfishUtilPopulated(arr)) return -1;
     if (meth == "zippin")
         return ElfishMathZippin(arr);
     else
@@ -50,11 +53,10 @@ function ElfishMathEstimate(arr, meth) {
  * Gets string 200 &pm; 59*
  */
 function ElfishMathEstimateString(arr, meth) {
-    if (arr.length < 2) {
-	    return "---";
-    }
-    var est = -1; 
-    var cf  = -1; 
+    if (!ElfishUtilPopulated(arr)) return "---";
+
+    var est = -1;
+    var cf  = -1;
     if (meth == "zippin") {
         est = ElfishMathZippin(arr);
         cf  = ElfishMathConfidenceInterval(arr, meth);
@@ -64,8 +66,8 @@ function ElfishMathEstimateString(arr, meth) {
     }
     var unstable = "";
     if (window.elfish.unstable) {
-	    window.elfish.unstable = false;
-	    unstable = "*";
+        window.elfish.unstable = false;
+        unstable = "*";
     }
     return est.toFixed(0) + " &pm; " + cf.toFixed(1) + unstable;
 }
@@ -75,8 +77,7 @@ function ElfishMathEstimateString(arr, meth) {
  * Returns whether cf/est <= confidence for given data and method.
  */
 function ElfishMathIsConfident(arr, confidence, meth) {
-    if (arr.length < 2)
-        return false;
+    if (!ElfishUtilPopulated(arr)) return false;
     var q = ElfishMathEstimate(arr, meth);
     var cf = ElfishMathConfidenceInterval(arr, meth);
     return (cf/q) <= confidence;
@@ -88,13 +89,13 @@ function ElfishMathIsConfident(arr, confidence, meth) {
  *
  */
 function ElfishMathCIslashE(arr, meth) {
-    if (arr.length < 2) return -1;
+    if (!ElfishUtilPopulated(arr)) return -1;
 
     // todo precomputed
     var q  = ElfishMathEstimate(arr, meth);
     var cf = ElfishMathConfidenceInterval(arr, meth);
     if (window.elfish.unstable)
-	    window.elfish.unstable = false;
+        window.elfish.unstable = false;
 
     return cf/q;
 }
@@ -104,12 +105,12 @@ function ElfishMathCIslashE(arr, meth) {
  *
  */
 function ElfishMathTSlashE(arr, meth) {
-    if (arr.length < 2) return -1;
+    if (!ElfishUtilPopulated(arr)) return -1;
 
-    var t = ElfishMathSum(arr);
+    var t = ElfishUtilSum(arr);
     var q = ElfishMathEstimate(arr, meth);
     if (window.elfish.unstable)
-	    window.elfish.unstable = false;
+        window.elfish.unstable = false;
 
     return (1.0 * t) / q;
 }
@@ -131,10 +132,9 @@ function ElfishMathTSlashE(arr, meth) {
 // float ElfishMathCarleStrub ( data )
 // float ElfishMathPreEstimate ( data, hatN )
 // float ElfishMathCatch ( data, hatN )
-// float ElfishMathSum ( data )
 
 
-/** 
+/**
  *  returns the X of the Carle & Strub equation
  */
 function ElfishMathX(arr) {
@@ -150,7 +150,7 @@ function ElfishMathX(arr) {
  *  Returns the T of the Carle & Strub equation, which is the sum of data.
  */
 function ElfishMathT(arr) {
-    return ElfishMathSum(arr);
+    return ElfishUtilSum(arr);
 }
 
 
@@ -160,6 +160,7 @@ function ElfishMathT(arr) {
  *  Returns -1 if no convergence in 1M steps.
  */
 function ElfishMathZippin(arr) {
+    if (!ElfishUtilPopulated(arr)) return -1;
     var t = ElfishMathT(arr);
     var x = ElfishMathX(arr);
     var k = arr.length;
@@ -198,6 +199,8 @@ function ElfishMathCarleStrubEq(t, hatN, k, x) {
  *  Returns -1 if no convergence in 1M steps.
  */
 function ElfishMathCarleStrub(arr) {
+    if (!ElfishUtilPopulated(arr)) return -1;
+
     var t = ElfishMathT(arr);
     var x = ElfishMathX(arr);
     var k = arr.length;
@@ -218,10 +221,12 @@ function ElfishMathCarleStrub(arr) {
  *  Pre estimate used to bootstrap Zippin.
  */
 function ElfishMathPreEstimate(arr, hatN) {
+    if (!ElfishUtilPopulated(arr)) return -1;
+
     var t = ElfishMathT(arr);
     var x = ElfishMathX(arr);
     var k = arr.length;
-    
+
     var tellerA = (hatN - t + 0.5);
     var tellerB = Math.pow((k * hatN - x)    , k);
     var nevner  = Math.pow((k * hatN - x - t), k);
@@ -236,6 +241,8 @@ function ElfishMathPreEstimate(arr, hatN) {
  *  This is used together with estimate to give the confidence.
  */
 function ElfishMathCatch(arr,hatN) {
+    if (!ElfishUtilPopulated(arr)) return -1;
+
     var t = ElfishMathT(arr);
     var x = ElfishMathX(arr);
     var k = arr.length;
@@ -244,16 +251,4 @@ function ElfishMathCatch(arr,hatN) {
 
     var ret = t / (1.0*nevner);
     return ret;
-}
-
-
-/**
- * Returns the sum of the values in arr.
- */
-function ElfishMathSum(arr) {
-    var t = 0;
-    for (var i = 0; i < arr.length; i++) {
-	    t += arr[i];
-    }
-    return t;
 }

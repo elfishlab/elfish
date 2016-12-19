@@ -209,7 +209,7 @@ function createNewEffortForGroup (effortName, groupId, speciesId) {
             effortName = "Effort";
         } else {
             var firstName = window.elfish.species[0].groups[0].efforts[0].name;
-            effortName = firstToken(firstName);
+            effortName = ElfishUtilFirstToken(firstName);
         }
     }
     
