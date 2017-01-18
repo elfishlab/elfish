@@ -30,17 +30,23 @@ function ElfishUtilFirstToken (str) {
 }
 
 
-
-
-function ElfishUtilPopulated(arr) {
+/**
+ * The number of integer elements of arr.
+ */
+function ElfishUtilLength(arr) {
     var c = 0;
     for (var i = 0; i < arr.length; i++) {
         if (Number.isInteger(arr[i]))
             c+=1;
-        if (c > 1)
-            return true;
     }
-    return false;
+    return c;
+}
+
+/**
+ * True if array contains an integer element.
+ */
+function ElfishUtilPopulated(arr) {
+    return ElfishUtilLength(arr) > 0;
 }
 
 /**

@@ -21,6 +21,13 @@ function plotFindCanvas(sp, gr) {
     return canvas[0].getContext("2d");
 }
 
+function allNegative(arr) {
+    for (var i = 0; i < arr.length; i++)
+        if (arr[i] >= 0)
+            return false;
+    return true;
+}
+
 function updatePlot(sp, gr) {
     var arr = [];
     var est = [];
@@ -41,6 +48,9 @@ function updatePlot(sp, gr) {
     labels.shift();
     est.shift();
     cf.shift();
+
+    if (est.length < 1 || allNegative(est))
+        return;
 
     var chartctx = plotFindCanvas(sp, gr);
     if (chartctx == null) {
