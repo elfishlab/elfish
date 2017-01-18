@@ -17,7 +17,7 @@ function ElfishMathConfidenceInterval(arr, meth) {
         hatN = ElfishMathCarleStrub(arr);
     var p = ElfishMathCatch(arr,hatN);
     var q = 1 - p;
-    var k = arr.length;
+    var k = ElfishMathK(arr);
 
     var qk = Math.pow(q,k);
 
@@ -64,12 +64,9 @@ function ElfishMathEstimateString(arr, meth) {
         est = ElfishMathCarleStrub(arr);
         cf  = ElfishMathConfidenceInterval(arr, meth);
     }
-    var unstable = "";
-    if (window.elfish.unstable) {
-        window.elfish.unstable = false;
-        unstable = "*";
-    }
-    return est.toFixed(0) + " &pm; " + cf.toFixed(1) + unstable;
+    if (est >= 0 && cf >= 0)
+        return est.toFixed(0) + " &pm; " + cf.toFixed(1);
+    return "N/A";
 }
 
 
@@ -94,8 +91,6 @@ function ElfishMathCIslashE(arr, meth) {
     // todo precomputed
     var q  = ElfishMathEstimate(arr, meth);
     var cf = ElfishMathConfidenceInterval(arr, meth);
-    if (window.elfish.unstable)
-        window.elfish.unstable = false;
 
     return cf/q;
 }
@@ -109,10 +104,8 @@ function ElfishMathTSlashE(arr, meth) {
 
     var t = ElfishUtilSum(arr);
     var q = ElfishMathEstimate(arr, meth);
-    if (window.elfish.unstable)
-        window.elfish.unstable = false;
 
-    return (1.0 * t) / q;
+    return t / q;
 }
 
 
@@ -139,9 +132,9 @@ function ElfishMathTSlashE(arr, meth) {
  */
 function ElfishMathX(arr) {
     var x = 0;
-    var k = arr.length;
-    for (var i = 0; i < k; i++) {
-        x += (k-(1+i))*arr[i];
+    var k = ElfishMathK(arr);
+    for (var i = 0; i < arr.length; i++) {
+        x += (k-(1+i))*arr[i]; // TODO handle if arr[i] = ""
     }
     return x;
 }
@@ -153,6 +146,15 @@ function ElfishMathT(arr) {
     return ElfishUtilSum(arr);
 }
 
+/**
+ *  Returns the number of integers in arr.
+ */
+function ElfishMathK(arr) {
+    return ElfishUtilLength(arr);
+}
+
+
+
 
 /**
  *  Computes the Zippin estimate of given data arr.
@@ -163,7 +165,19 @@ function ElfishMathZippin(arr) {
     if (!ElfishUtilPopulated(arr)) return -1;
     var t = ElfishMathT(arr);
     var x = ElfishMathX(arr);
-    var k = arr.length;
+    var k = ElfishMathK(arr);
+    var z_min = ((t-1)*(k-1)/2)-1; // X must be greater than z_min
+    if (x <= z_min) {
+        console.log("Zippin X below z_min for " + arr);
+        return -1;
+    }
+    else {
+        console.log("arr = " + arr);
+        console.log("t = " + t);
+        console.log("k = " + k);
+        console.log("X = " + x);
+        console.log("z_min = ((t-1)*(k-1)/2) - 1 = " + z_min);
+    }
     var hatN = t;
     for (var i = 0; i < 1000000; i++) {
         var lhs = hatN + i;
@@ -203,7 +217,7 @@ function ElfishMathCarleStrub(arr) {
 
     var t = ElfishMathT(arr);
     var x = ElfishMathX(arr);
-    var k = arr.length;
+    var k = ElfishMathK(arr);
     var hatN = t;
 
     for (var i = 0; i < 1000000; i++) {
@@ -225,7 +239,7 @@ function ElfishMathPreEstimate(arr, hatN) {
 
     var t = ElfishMathT(arr);
     var x = ElfishMathX(arr);
-    var k = arr.length;
+    var k = ElfishMathK(arr);
 
     var tellerA = (hatN - t + 0.5);
     var tellerB = Math.pow((k * hatN - x)    , k);
@@ -245,7 +259,7 @@ function ElfishMathCatch(arr,hatN) {
 
     var t = ElfishMathT(arr);
     var x = ElfishMathX(arr);
-    var k = arr.length;
+    var k = ElfishMathK(arr);
 
     var nevner = k * hatN - x;
 
