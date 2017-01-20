@@ -41,11 +41,18 @@ function ElfishMathConfidenceInterval(arr, meth) {
  * q = (1-p) (BV4)
  */
 function ElfishMathEstimate(arr, meth) {
-    if (!ElfishUtilPopulated(arr)) return -1;
-    if (meth == "zippin")
-        return ElfishMathZippin(arr);
+    var t_start = performance.now();
+    var val = -1;
+    if (!ElfishUtilPopulated(arr))
+        val = -1;
+    else if (meth == "zippin")
+        val = ElfishMathZippin(arr);
     else
-        return ElfishMathCarleStrub(arr);
+        val = ElfishMathCarleStrub(arr);
+    var t_end = performance.now();
+    var t_time = (t_end - t_start).toFixed(2);
+    console.log("ElfishMathEstimate(" + arr + "," + meth + ") = " + val + " took " + t_time + "  ms");
+    return val;
 }
 
 
@@ -179,7 +186,7 @@ function ElfishMathZippin(arr) {
         console.log("z_min = ((t-1)*(k-1)/2) - 1 = " + z_min);
     }
     var hatN = t;
-    for (var i = 0; i < 1000000; i++) {
+    for (var i = 0; i < window.elfish.upperlimit; i++) {
         var lhs = hatN + i;
         var rhs = ElfishMathPreEstimate(arr, lhs);
         if (rhs > lhs)
@@ -220,7 +227,7 @@ function ElfishMathCarleStrub(arr) {
     var k = ElfishMathK(arr);
     var hatN = t;
 
-    for (var i = 0; i < 1000000; i++) {
+    for (var i = 0; i < window.elfish.upperlimit; i++) {
         var lhs = hatN + i;
         var rhs = ElfishMathCarleStrubEq(t, lhs, k, x);
         if (lhs >= rhs)

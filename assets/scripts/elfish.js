@@ -1,5 +1,6 @@
 function initiateStorage() {
     window.elfish = {
+        upperlimit: 300000,
         numberOfEfforts: 2,
         species: [],
         visibleSpecies: null
