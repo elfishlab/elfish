@@ -505,7 +505,7 @@ function updateSummary (sp,gr) {
     var arr = [];
 
     for (var e = 0; e < numOfEfforts; e++) {
-      var val = groups.efforts[e].value;
+        var val = groups.efforts[e].value;
         eVal = 0;
         if (val !== "")
             eVal = parseInt(val, 10);
