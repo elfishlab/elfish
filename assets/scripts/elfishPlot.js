@@ -63,7 +63,7 @@ function updatePlot(sp, gr) {
         data: {
             labels: labels,
             datasets: [{
-                label: plotGetName(sp, gr),
+                label: '',
                 data: est,
                 error: cf,
                 errorDir : "both",
@@ -75,6 +75,11 @@ function updatePlot(sp, gr) {
                 borderColor: "rgba(75,192,192,1)", // line color blueish
                 pointRadius: 2    // size of drawn dots
             }]
+        },
+        options: {
+            legend: {
+                display: false
+            }
         }
     });
 }
