@@ -69,7 +69,7 @@ function reloadDataIntoDom() {
 
                 efGUI.domEffort(e, eName, g, s, value, groups[g].efforts);
                 console.log("\t\tAdded effort " + e + ": " + eName + " (" + value + ")");
-                recomputeValues(s,g,e);
+                recomputeValues(s,g);
             }
             updatePlot(s,g);
         }
@@ -79,6 +79,14 @@ function reloadDataIntoDom() {
 
     if (window.elfish.species.length) {
         efGUI.showSpecie(window.elfish.visibleSpecies || 0);
+    }
+
+    // Updates the method selector, reflecting the stored value.
+    var methodDropdown = document.getElementsByName("method")[0];
+    var methodOptions = methodDropdown.getElementsByTagName("option");
+    for (var i = 0; i < methodOptions.length; i++) {
+        if (methodOptions[i].value == window.elfish.method)
+            methodOptions[i].selected = true;
     }
 }
 
@@ -199,6 +207,42 @@ function createNewEffortForGroup (effortName, groupId, speciesId) {
 }
 
 
+/*
+ document content manipulations
+ */
+function clearEst(postfix) {
+    console.log("Clearing innerHTML");
+    document.getElementById("est" + postfix).innerHTML = "---";
+    document.getElementById("ke"  + postfix).innerHTML = "---";
+    document.getElementById("te"  + postfix).innerHTML = "---";
+}
+
+function setEst(postfix, val) {
+    document.getElementById("est" + postfix).innerHTML = "N̂ =" + val;
+}
+
+function setKe(postfix, val) {
+    document.getElementById("ke" + postfix).innerHTML = "CI/N̂ =" + val;
+}
+
+function setTe(postfix, val) {
+    document.getElementById("te" + postfix).innerHTML = "T/N̂ =" + val;
+}
+
+function getEst(postfix) {
+    return document.getElementById("est" + postfix).innerHTML;
+}
+function getKe(postfix) {
+    return document.getElementById("ke" + postfix).innerHTML;
+}
+function getTe(postfix) {
+    return document.getElementById("te" + postfix).innerHTML;
+}
+
+
+
+
+
 /**
  *  Exports the content of window.elfish to a CSV string.
  *
@@ -228,7 +272,7 @@ function exportCSV () {
                 if (e <= 0)
                     csv += ",---";
                 else
-                    csv += "," + document.getElementById("est" + postfix).innerHTML;
+                    csv += "," + getEst(postfix);
             }
 
             // k/E
@@ -240,7 +284,7 @@ function exportCSV () {
                 if (e <= 0)
                     csv += ",---";
                 else
-                    csv += "," + document.getElementById("ke" + postfix).innerHTML;
+                    csv += "," + getKe(postfix);
             }
 
             // T/E
@@ -252,7 +296,7 @@ function exportCSV () {
                 if (e <= 0)
                     csv += ",---";
                 else
-                    csv += "," + document.getElementById("te" + postfix).innerHTML;
+                    csv += "," + getTe(postfix);
             }
         }
         csv += "\n";
@@ -261,8 +305,59 @@ function exportCSV () {
     return csv;
 }
 
+function computeValue(s,g,e,vals) {
+    var arr = [];
+    var postfix = "-" + s + "-" + g + "-" + e;
+    var t = 0;
+    for (var i = 0; i < vals.length; i++) {
+        var val = vals[i];
+        if (val === "") {
+            clearEst(postfix);
+            t = NaN;
+            break;
+        }
+        var v = parseInt(val,10);
 
-function recomputeValues(s,g,e) {
+        arr.push(v);
+        t += v;
+    }
+
+    if (t != t) {
+        // console.log("Array contains NaN so abort");
+        updateSummary(s,g);
+        return; // NaN
+    }
+
+    var estString = ElfishMathEstimateString(arr,window.elfish.method);
+    console.log("picked method " + window.elfish.method + " :::: " + estString);
+
+    setEst(postfix, estString);
+
+    var ciSlashE = "---";
+    var ciSlashEval = ElfishMathCIslashE(arr, window.elfish.method);
+    if (ciSlashEval >= 0)
+        ciSlashE = ciSlashEval.toFixed(3);
+    setKe(postfix, ciSlashE);
+
+    // T / E
+    var tSlashE = "---";
+    var tSlashEval = ElfishMathTSlashE(arr, window.elfish.method);
+    if (tSlashEval >= 0)
+        tSlashE = tSlashEval.toFixed(3);
+    setTe(postfix, tSlashE);
+    document.getElementById("est" + postfix).className = "est";
+
+    // marking effort boxes as green when below given confidence
+    var effortboxId = "effort-" + s + "-" + g + "-" + e;
+    var effortbox = document.getElementById(effortboxId);
+    if (ElfishMathIsConfident(arr, window.elfish.confidence,
+                              window.elfish.method))
+        effortbox.className = "effort confident";
+    else
+        effortbox.className = "effort";
+}
+
+function recomputeValues(s,g) {
     // the values for effort e in species s, group g changed,
     // recompute the entire group
 
@@ -274,70 +369,9 @@ function recomputeValues(s,g,e) {
     for (var e = 0; e < efforts.length; e++) {
         vals.push(getInputValue(s,g,e));
 
-        var postfix = "-" + s + "-" + g + "-" + e;
-
-
         if (e > 0) {
             // one effort is not enough.
-
-            var arr = [];
-            var t = 0;
-            for (var i = 0; i < vals.length; i++) {
-                var val = vals[i];
-                if (val === "") {
-                    console.log("Clearing innerHTML");
-                    document.getElementById("est" + postfix).innerHTML = "---";
-                    document.getElementById("ke" + postfix).innerHTML = "---";
-                    document.getElementById("te" + postfix).innerHTML = "---";
-		    t = NaN;
-                    break;
-                }
-                var v = parseInt(val,10);
-
-                arr.push(v);
-                t += v;
-            }
-
-            if (t != t) {
-                // console.log("Array contains NaN so abort");
-                updateSummary(s,g);
-                return; // NaN
-            }
-
-
-            var estString = ElfishMathEstimateString(arr,window.elfish.method);
-            console.log("picked method " + window.elfish.method + " :::: " + estString);
-
-            document.getElementById("est" + postfix).innerHTML =
-                "N̂ =" + estString;
-
-            var ciSlashE = "---";
-            var ciSlashEval = ElfishMathCIslashE(arr, window.elfish.method);
-            if (ciSlashEval >= 0)
-                ciSlashE = ciSlashEval.toFixed(3);
-            document.getElementById("ke" + postfix).innerHTML = "CI/N̂ =" + ciSlashE;
-
-            // T / E
-            var tSlashE = "---";
-            var tSlashEval = ElfishMathTSlashE(arr, window.elfish.method);
-            if (tSlashEval >= 0)
-                tSlashE = tSlashEval.toFixed(3);
-            document.getElementById("te" + postfix).innerHTML = "T/N̂ =" + tSlashE;
-
-            if (estString.indexOf("*") >= 0) {
-                document.getElementById("est" + postfix).className = "est red";
-            } else {
-                document.getElementById("est" + postfix).className = "est";
-            }
-
-            // marking effort boxes as green when below given confidence
-            var effortboxId = "effort-" + s + "-" + g + "-" + e;
-            var effortbox = document.getElementById(effortboxId);
-            if (ElfishMathIsConfident(arr, window.elfish.confidence,
-                                      window.elfish.method))
-                effortbox.className = "effort confident";
-            else
-                effortbox.className = "effort";
+            computeValue(s,g,e,vals);
         }
     }
     store();
@@ -462,7 +496,7 @@ function run () {
 
             window.elfish.species[s].groups[g].efforts[e].value = val;
 
-            recomputeValues(s,g,e);
+            recomputeValues(s,g);
             store();
             updatePlot(s,g);
         });
