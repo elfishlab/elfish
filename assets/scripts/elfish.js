@@ -308,24 +308,12 @@ function exportCSV () {
 function computeValue(s,g,e,vals) {
     var arr = [];
     var postfix = "-" + s + "-" + g + "-" + e;
-    var t = 0;
     for (var i = 0; i < vals.length; i++) {
         var val = vals[i];
-        if (val === "") {
-            clearEst(postfix);
-            t = NaN;
-            break;
-        }
-        var v = parseInt(val,10);
-
-        arr.push(v);
-        t += v;
-    }
-
-    if (t != t) {
-        // console.log("Array contains NaN so abort");
-        updateSummary(s,g);
-        return; // NaN
+        if (val === "")
+            arr.push(0);
+        else
+            arr.push(parseInt(val,10));
     }
 
     var estString = ElfishMathEstimateString(arr,window.elfish.method);
@@ -484,15 +472,14 @@ function run () {
         .delegate(".catch-input", "change", function (evtObj) {
             var val = evtObj.target.value;
 
-            s = parseInt($(evtObj.target).attr("data-input-species"), 10);
-            g = parseInt($(evtObj.target).attr("data-input-group"), 10);
-            e = parseInt($(evtObj.target).attr("data-input-effort"), 10);
+            var s = parseInt($(evtObj.target).attr("data-input-species"), 10);
+            var g = parseInt($(evtObj.target).attr("data-input-group"), 10);
+            var e = parseInt($(evtObj.target).attr("data-input-effort"), 10);
 
-            if (val === "") {
-            	console.log("Empty val for " + s + " " + g + " " + e);
-            } else {
-            	val = parseInt(val, 10);
-            }
+            if (val === "")
+                val = 0;
+            else
+                val = parseInt(val, 10);
 
             window.elfish.species[s].groups[g].efforts[e].value = val;
 
@@ -525,14 +512,12 @@ function updateSummary (sp,gr) {
     var arr = [];
 
     for (var e = 0; e < numOfEfforts; e++) {
-	var val = groups.efforts[e].value;
-        if (val === "") {
-            continue;
-        } else {
-            var eVal = parseInt(val, 10);
-            totalCatch += eVal;
-            arr.push(eVal);
-        }
+      var val = groups.efforts[e].value;
+        eVal = 0;
+        if (val !== "")
+            eVal = parseInt(val, 10);
+        totalCatch += eVal;
+        arr.push(eVal);
     }
 
     var est = ElfishMathEstimateString(arr, window.elfish.method);
