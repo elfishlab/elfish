@@ -231,6 +231,42 @@ function createNewEffortForGroup (effortName, groupId, speciesId) {
 }
 
 
+/*
+ document content manipulations
+ */
+function clearEst(postfix) {
+    console.log("Clearing innerHTML");
+    document.getElementById("est" + postfix).innerHTML = "---";
+    document.getElementById("ke"  + postfix).innerHTML = "---";
+    document.getElementById("te"  + postfix).innerHTML = "---";
+}
+
+function setEst(postfix, val) {
+    document.getElementById("est" + postfix).innerHTML = "N̂ =" + val;
+}
+
+function setKe(postfix, val) {
+    document.getElementById("ke" + postfix).innerHTML = "CI/N̂ =" + val;
+}
+
+function setTe(postfix, val) {
+    document.getElementById("te" + postfix).innerHTML = "T/N̂ =" + val;
+}
+
+function getEst(postfix) {
+    return document.getElementById("est" + postfix).innerHTML;
+}
+function getKe(postfix) {
+    return document.getElementById("ke" + postfix).innerHTML;
+}
+function getTe(postfix) {
+    return document.getElementById("te" + postfix).innerHTML;
+}
+
+
+
+
+
 /**
  *  Exports the content of window.elfish to a CSV string.
  *
@@ -260,7 +296,7 @@ function exportCSV () {
                 if (e <= 0)
                     csv += ",---";
                 else
-                    csv += "," + document.getElementById("est" + postfix).innerHTML;
+                    csv += "," + getEst(postfix);
             }
 
             // k/E
@@ -272,7 +308,7 @@ function exportCSV () {
                 if (e <= 0)
                     csv += ",---";
                 else
-                    csv += "," + document.getElementById("ke" + postfix).innerHTML;
+                    csv += "," + getKe(postfix);
             }
 
             // T/E
@@ -284,7 +320,7 @@ function exportCSV () {
                 if (e <= 0)
                     csv += ",---";
                 else
-                    csv += "," + document.getElementById("te" + postfix).innerHTML;
+                    csv += "," + getTe(postfix);
             }
         }
         csv += "\n";
@@ -300,10 +336,7 @@ function computeValue(s,g,e,vals) {
     for (var i = 0; i < vals.length; i++) {
         var val = vals[i];
         if (val === "") {
-            console.log("Clearing innerHTML");
-            document.getElementById("est" + postfix).innerHTML = "---";
-            document.getElementById("ke" + postfix).innerHTML = "---";
-            document.getElementById("te" + postfix).innerHTML = "---";
+            clearEst(postfix);
             t = NaN;
             break;
         }
@@ -322,21 +355,20 @@ function computeValue(s,g,e,vals) {
     var estString = ElfishMathEstimateString(arr,window.elfish.method);
     console.log("picked method " + window.elfish.method + " :::: " + estString);
 
-    document.getElementById("est" + postfix).innerHTML =
-        "N̂ =" + estString;
+    setEst(postfix, estString);
 
     var ciSlashE = "---";
     var ciSlashEval = ElfishMathCIslashE(arr, window.elfish.method);
     if (ciSlashEval >= 0)
         ciSlashE = ciSlashEval.toFixed(3);
-    document.getElementById("ke" + postfix).innerHTML = "CI/N̂ =" + ciSlashE;
+    setKe(postfix, ciSlashE);
 
     // T / E
     var tSlashE = "---";
     var tSlashEval = ElfishMathTSlashE(arr, window.elfish.method);
     if (tSlashEval >= 0)
         tSlashE = tSlashEval.toFixed(3);
-    document.getElementById("te" + postfix).innerHTML = "T/N̂ =" + tSlashE;
+    setTe(postfix, tSlashE);
     document.getElementById("est" + postfix).className = "est";
 
     // marking effort boxes as green when below given confidence
