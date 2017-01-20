@@ -2,7 +2,10 @@ function initiateStorage() {
     window.elfish = {
         upperlimit: 300000,
         confidence: 0.5,
-        numberOfEfforts: 2,
+
+        /* The amount of efforts that are create upon group creation. It's also
+        the lowest number of efforts possible in any group. */
+        minimumNumbersOfEfforts: 2,
         species: [],
         visibleSpecies: null
     };
@@ -60,7 +63,7 @@ function reloadDataIntoDom() {
             var gName = groups[g].name;
             efGUI.domGroup(g, gName, s);
 
-            for (var e = 0; e < window.elfish.numberOfEfforts; e++) {
+            for (var e = 0; e < groups[g].efforts.length; e++) {
                 var eName = groups[g].efforts[e].name;
                 var value =  groups[g].efforts[e].value;
 
@@ -158,7 +161,7 @@ function createNewGroup (specie) {
 
 
 function populateGroupsWithEfforts() {
-    var n = window.elfish.numberOfEfforts;
+    var n = window.elfish.minimumNumbersOfEfforts;
     for (var s = 0; s < window.elfish.species.length; s++) {
         for (var g = 0; g < window.elfish.species[s].groups.length; g++) {
             var gr = window.elfish.species[s].groups[g];
@@ -171,45 +174,18 @@ function populateGroupsWithEfforts() {
 
 
 /**
- * This function increases the global effort count by one, and then
- * proceeds to add efforts to all the groups in every specie.
- *
- */
-function createNewEffort (effortName) {
-    window.elfish.numberOfEfforts += 1;
-
-    var species = window.elfish.species;
-    for (var s = 0; s < species.length; s++) {
-        for (var g = 0; g < species[s].groups.length; g++) {
-            var group = species[s].groups[g];
-            if (group.efforts.length >= window.elfish.numberOfEfforts) {
-                console.log("Enough efforts\t for S" + s + ".G" + g);
-                continue;
-            } else {
-                console.log("New effort\t for S" + s + ".G" + g);
-                createNewEffortForGroup(effortName, g, s);
-            }
-        }
-    }
-}
-
-/**
- *  Creates a new effort for the given group.  If the group already
- *  has enough efforts according to window.elfish.numberOfEfforts,
- *  logs a warning, and returns.
- *
+ *  Creates a new effort for the given group.
  */
 function createNewEffortForGroup (effortName, groupId, speciesId) {
     var group = window.elfish.species[speciesId].groups[groupId];
 
-    console.log("createNewEffortForGroup(" + effortName + "," + groupId + ", " +
-                speciesId + ")");
-
-    // checking if we have too many efforts already
-    if (group.efforts.length >= window.elfish.numberOfEfforts) {
-        console.warn("Too many efforts already for group " + groupId + " in species " + speciesId);
+    if (!group) {
+        console.error("Could not create effort: no group with id " + groupId);
         return;
     }
+
+    console.log("createNewEffortForGroup(" + effortName + "," + groupId + ", " +
+                speciesId + ")");
 
     if (!effortName) {
         console.log("Creating effort without predefined name");
@@ -392,6 +368,7 @@ function recomputeValues(s,g) {
     var vals = [];
     for (var e = 0; e < efforts.length; e++) {
         vals.push(getInputValue(s,g,e));
+
         if (e > 0) {
             // one effort is not enough.
             computeValue(s,g,e,vals);
@@ -405,9 +382,10 @@ function recomputeValues(s,g) {
 function run () {
     $( ".app" )
         .delegate(".placeholder", "click", function (evtObj) {
-            var jqPar = $(evtObj.target).parent(":first");
-            var specieId = parseInt(jqPar.data("species-id"), 10);
-            createNewEffort("", specieId);
+            var groupParent = $($(evtObj.target).parents("[data-id]:first")[0]);
+            var specieId = parseInt(groupParent.attr("data-specie-id"), 10);
+            var groupId = parseInt(groupParent.attr("data-group-id"), 10);
+            createNewEffortForGroup("", groupId, specieId);
             store();
         });
 
