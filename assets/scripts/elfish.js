@@ -210,13 +210,6 @@ function createNewEffortForGroup (effortName, groupId, speciesId) {
 /*
  document content manipulations
  */
-function clearEst(postfix) {
-    console.log("Clearing innerHTML");
-    document.getElementById("est" + postfix).innerHTML = "---";
-    document.getElementById("ke"  + postfix).innerHTML = "---";
-    document.getElementById("te"  + postfix).innerHTML = "---";
-}
-
 function setEst(postfix, val) {
     document.getElementById("est" + postfix).innerHTML = "N̂ =" + val;
 }
