@@ -211,25 +211,40 @@ function createNewEffortForGroup (effortName, groupId, speciesId) {
  document content manipulations
  */
 function setEst(postfix, val) {
-    document.getElementById("est" + postfix).innerHTML = "N̂ =" + val;
+    var elt = document.getElementById("est" + postfix);
+    if (elt)
+        elt.innerHTML = "N̂ =" + val;
 }
 
 function setKe(postfix, val) {
-    document.getElementById("ke" + postfix).innerHTML = "CI/N̂ =" + val;
+    var elt = document.getElementById("ke" + postfix);
+    if (elt)
+        elt.innerHTML = "CI/N̂ =" + val;
 }
 
 function setTe(postfix, val) {
-    document.getElementById("te" + postfix).innerHTML = "T/N̂ =" + val;
+    var elt = document.getElementById("te" + postfix);
+    if (elt)
+        elt.innerHTML = "T/N̂ =" + val;
 }
 
 function getEst(postfix) {
-    return document.getElementById("est" + postfix).innerHTML;
+    var elt = document.getElementById("est" + postfix);
+    if (elt)
+        return elt.innerHTML;
+    return 0;
 }
 function getKe(postfix) {
-    return document.getElementById("ke" + postfix).innerHTML;
+    var elt = document.getElementById("ke" + postfix);
+    if (elt)
+        return elt.innerHTML;
+    return 0;
 }
 function getTe(postfix) {
-    return document.getElementById("te" + postfix).innerHTML;
+    var elt = document.getElementById("te" + postfix);
+    if (elt)
+        return elt.innerHTML;
+    return 0;
 }
 
 
@@ -326,6 +341,11 @@ function computeValue(s,g,e,vals) {
     if (tSlashEval >= 0)
         tSlashE = tSlashEval.toFixed(3);
     setTe(postfix, tSlashE);
+
+    // this may happen on init
+    if (!document.getElementById("est" + postfix))
+        return;
+
     document.getElementById("est" + postfix).className = "est";
 
     // marking effort boxes as green when below given confidence
