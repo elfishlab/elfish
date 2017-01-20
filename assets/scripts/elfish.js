@@ -1,6 +1,7 @@
 function initiateStorage() {
     window.elfish = {
         upperlimit: 300000,
+        confidence: 0.5,
         numberOfEfforts: 2,
         species: [],
         visibleSpecies: null
@@ -353,10 +354,11 @@ function recomputeValues(s,g,e) {
                 document.getElementById("est" + postfix).className = "est";
             }
 
-            // marking effort boxes as green when below 0.01 confidence
+            // marking effort boxes as green when below given confidence
             var effortboxId = "effort-" + s + "-" + g + "-" + e;
             var effortbox = document.getElementById(effortboxId);
-            if (ElfishMathIsConfident(arr, 0.01, window.elfish.method))
+            if (ElfishMathIsConfident(arr, window.elfish.confidence,
+                                      window.elfish.method))
                 effortbox.className = "effort confident";
             else
                 effortbox.className = "effort";
