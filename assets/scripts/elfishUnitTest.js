@@ -1,5 +1,5 @@
 console.log("unit testing ... ");
-
+initiateStorage();
 
 /**
  *  Tests if two floats are equal (close enough).  If no epsilon is
