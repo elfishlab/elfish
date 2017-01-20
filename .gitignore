@@ -17,10 +17,3 @@ hs_err_pid*
 bin/
 gen/
 res/
-
-*.min.js
-*.min.css
-*-min.css
-# Deps
-bower_components
-node_modules
