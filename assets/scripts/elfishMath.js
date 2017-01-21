@@ -84,6 +84,8 @@ function ElfishMathIsConfident(arr, confidence, meth) {
     if (!ElfishUtilPopulated(arr)) return false;
     var q = ElfishMathEstimate(arr, meth);
     var cf = ElfishMathConfidenceInterval(arr, meth);
+    if (q < 0 || cf < 0)
+        return false;
     return (cf/q) <= confidence;
 }
 
