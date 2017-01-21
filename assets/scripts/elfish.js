@@ -7,9 +7,9 @@ function initiateStorage() {
         the lowest number of efforts possible in any group. */
         minimumNumbersOfEfforts: 2,
         species: [],
-        visibleSpecies: null
+        visibleSpecies: null,
+        method: "cs"
     };
-    window.elfish.method = "cs";
 }
 
 /**
@@ -66,6 +66,8 @@ function reloadDataIntoDom() {
             for (var e = 0; e < groups[g].efforts.length; e++) {
                 var eName = groups[g].efforts[e].name;
                 var value =  groups[g].efforts[e].value;
+                if (value === "")
+                    value = 0;
 
                 efGUI.domEffort(e, eName, g, s, value, groups[g].efforts);
                 console.log("\t\tAdded effort " + e + ": " + eName + " (" + value + ")");
@@ -110,10 +112,11 @@ function clearLocalStorage() {
 function getInputValue(sp, gr, ef) {
     var elt = getInput(sp,gr,ef);
 
-    retVal = NaN;
-    if (elt !== null) {
+    var retVal = NaN;
+    if (elt !== null)
         retVal = elt.value;
-    }
+    if (retVal === "")
+        retVal = 0;
     return retVal;
 }
 
@@ -202,7 +205,7 @@ function createNewEffortForGroup (effortName, groupId, speciesId) {
     // "Effort 3" --- if this is the third effort
     effortName += " " + (1+group.efforts.length);
 
-    group.efforts.push({name: effortName, value: ""});
+    group.efforts.push({name: effortName, value: 0});
     efGUI.domEffort((group.efforts.length-1), effortName, groupId, speciesId, group.efforts);
 }
 
@@ -513,11 +516,21 @@ function run () {
         });
 }
 
+function setSummary(sp, gr, numEfforts, est, totalCatch, method) {
+    var elt = $(".group-summary[data-group-id="+gr+"][data-specie-id="+sp+"]")[0];
+    if (!elt)
+        return false;
+    var data = "";
+    data += "<p>Efforts = " + numEfforts + "</p>";
+    data += "<p>N̂ = " + est + "</p>";
+    data += "<p>T = " + totalCatch + "</p>";
+    data += "<p>M = " + window.elfish.method + "</p>";
+    elt.innerHTML = data;
+    return true;
+}
 
 
 function updateSummary (sp,gr) {
-    var elt = $(".group-summary[data-group-id="+gr+"][data-specie-id="+sp+"]")[0];
-
     var groups = window.elfish.species[sp].groups[gr];
     var numOfEfforts = groups.efforts.length;
     var totalCatch = 0;
@@ -526,7 +539,7 @@ function updateSummary (sp,gr) {
 
     for (var e = 0; e < numOfEfforts; e++) {
         var val = groups.efforts[e].value;
-        eVal = 0;
+        var eVal = 0;
         if (val !== "")
             eVal = parseInt(val, 10);
         totalCatch += eVal;
@@ -534,13 +547,7 @@ function updateSummary (sp,gr) {
     }
 
     var est = ElfishMathEstimateString(arr, window.elfish.method);
-    console.log("SUMMARY method " + window.elfish.method + ": " + est);
-
-    var data = "<p>Efforts = " + numOfEfforts + "</p>";
-    data += "<p>N̂ = " + est + "</p>";
-    data += "<p>T = " + totalCatch + "</p>";
-
-    elt.innerHTML = data;
+    setSummary(sp, gr, numOfEfforts, est, totalCatch, window.elfish.method);
 }
 
 
