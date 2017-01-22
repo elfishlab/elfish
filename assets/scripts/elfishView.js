@@ -41,7 +41,7 @@ function ViewGetTe(s,g,e) {
 function ViewGetInputValue(sp, gr, ef) {
     var elt = ViewGetInput(sp,gr,ef);
 
-    var retVal = NaN;
+    var retVal = 0;
     if (elt !== null)
         retVal = elt.value;
     if (retVal === "")
@@ -57,7 +57,15 @@ function ViewGetEffortBox(s,g,e) {
     return effortbox;
 }
 
-function ViewAddEffortBoxClass(s,g,e,cls) {
+function ViewUpdateConfidenceClass(s,g,e,isConfident) {
+    var classname = "confident";
+    if (isConfident)
+        _ViewAddEffortBoxClass(s,g,e,classname);
+    else
+        _ViewRemoveEffortBoxClass(s,g,e,classname);
+}
+
+function _ViewAddEffortBoxClass(s,g,e,cls) {
     var eb = ViewGetEffortBox(s,g,e);
     if (!eb)
         return false;
@@ -67,7 +75,7 @@ function ViewAddEffortBoxClass(s,g,e,cls) {
     return true;
 }
 
-function ViewRemoveEffortBoxClass(s,g,e,cls) {
+function _ViewRemoveEffortBoxClass(s,g,e,cls) {
     var eb = ViewGetEffortBox(s,g,e);
     if (!eb)
         return false;

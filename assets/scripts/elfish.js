@@ -246,11 +246,12 @@ function computeValue(s,g,e,vals) {
     ModelSetEst(s,g,e, estString);
     ViewSetEst(s,g,e, estString);
 
+    // CI / E (K/E)
     var ciSlashE = "---";
     var ciSlashEval = ElfishMathCIslashE(arr, window.elfish.method);
     if (ciSlashEval >= 0)
         ciSlashE = ciSlashEval.toFixed(3);
-    ModelSetKe(s,g,e, ciSlashE); // model
+    ModelSetKe(s,g,e, ciSlashEval); // model
     ViewSetKe(s,g,e, ciSlashE);  // view
 
     // T / E
@@ -258,16 +259,12 @@ function computeValue(s,g,e,vals) {
     var tSlashEval = ElfishMathTSlashE(arr, window.elfish.method);
     if (tSlashEval >= 0)
         tSlashE = tSlashEval.toFixed(3);
-    ModelSetTe(s,g,e, tSlashE);
+    ModelSetTe(s,g,e, tSlashEval);
     ViewSetTe(s,g,e, tSlashE);
-    ViewSetEstClass(s,g,e,"est");
 
     // marking effort boxes as green when below given confidence
-    if (ElfishMathIsConfident(arr, window.elfish.confidence,
-                              window.elfish.method))
-        ViewAddEffortBoxClass(s,g,e, "confident");
-    else
-        ViewRemoveEffortBoxClass(s,g,e, "confident");
+    var isconf = ModelGetKe(s,g,e) <= window.elfish.confidence;
+    ViewUpdateConfidenceClass(s,g,e,isconf);
 }
 
 function recomputeValues(s,g) {
@@ -472,6 +469,18 @@ function setMethod(mt) {
 }
 
 
+function refreshAllConfidences() {
+    for (var s = 0; s < window.elfish.species.length; s++) {
+        var groups = window.elfish.species[s].groups;
+        for (var g = 0; g < groups.length; g++) {
+            for (var e = 0; e < groups[g].efforts.length; e++) {
+                var isconf = ModelGetKe(s,g,e) <= window.elfish.confidence;
+                ViewUpdateConfidenceClass(s,g,e,isconf);
+            }
+        }
+    }
+}
+
 /**
  * @brief Sets a new confidence.
  *
@@ -487,7 +496,7 @@ function setConfidence(val) {
     store();
 
     ViewUpdateConfidence(val);
-    reloadDataIntoDom();
+    refreshAllConfidences();
 
     console.log("Confidence: ", val);
 }
