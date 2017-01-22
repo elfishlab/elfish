@@ -25,6 +25,7 @@ function plotOnNewCanvas(sp, gr) {
         canvasContainer.removeChild(canvasContainer.firstChild);
     }
     canvas = canvasContainer.appendChild(document.createElement("canvas"));
+    canvas.setAttribute("style", "display: none");
 
     if (!canvas) {
         console.error("canvas null for " + sp + ", " + gr);
