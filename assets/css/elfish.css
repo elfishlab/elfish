@@ -180,6 +180,17 @@ input[type="number"] {
     color: #800;
 }
 
+.settings-box {
+    background-color: #eee;
+    font-size: 13pt;
+    margin: 15px 10px 15px 0;
+    padding: 10px;
+    border-radius: 10px;
+    text-align: center;
+    max-width: 300px;
+    transition: .5s;
+}
+/*
 .algorithm {
     background-color: #eee;
     width: 200px;
@@ -190,6 +201,12 @@ input[type="number"] {
     text-align: center;
     max-width: 300px;
     transition: .5s;
+}
+*/
+
+[name=confidence-val] {
+    width: 100px;
+    text-align: center;
 }
 
 .confident {

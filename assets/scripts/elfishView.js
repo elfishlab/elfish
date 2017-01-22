@@ -107,3 +107,26 @@ function setMethodDropdown(meth) {
             methodOptions[i].selected = true;
     }
 }
+
+function confidenceFieldChanged(val) {
+    setConfidence(val);
+}
+
+function confidenceRangeChanged(val) {
+    setConfidence(val / 1000);
+}
+
+/**
+ * @brief Update the confidence settings in the UI.
+ * @details Gives new values to both the range slider as well as the free-input
+ *          text box.
+ *
+ * @param  val - a number between and including 0.001 and 1.
+ */
+function updateConfidence(val) {
+    var range = document.getElementsByName("confidence-range")[0];
+    var numberField = document.getElementsByName("confidence-val")[0];
+    numberField.value = val;
+    range.value = val * 1000;
+}
+

@@ -85,6 +85,9 @@ function reloadDataIntoDom() {
 
     // Updates the method selector, reflecting the stored value.
     setMethodDropdown(window.elfish.method);
+
+    // Updates the confidence threshold settings.
+    updateConfidence(window.elfish.confidence);
 }
 
 
@@ -490,4 +493,25 @@ function setMethod(mt) {
 
     console.log("Method: " + window.elfish.method);
     reloadDataIntoDom();
+}
+
+
+/**
+ * @brief Sets a new confidence.
+ *
+ * @param  val - a number between and including 0.001 and 1.
+ */
+function setConfidence(val) {
+    if (val < 0.001 || val > 1) {
+        console.warn('Bad confidence value', val);
+        return;
+    }
+
+    window.elfish.confidence = val;
+    store();
+
+    updateConfidence(val);
+    reloadDataIntoDom();
+
+    console.log("Confidence: ", val);
 }
