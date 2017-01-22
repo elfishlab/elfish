@@ -71,7 +71,7 @@ input[type="number"] {
     position: absolute;
     margin-right: -15px;
     opacity: 0;
-    transition: opacity .5s;
+    transition: opacity .2s;
     top: 0;
     overflow: hidden;
     max-width: 100%;
@@ -81,8 +81,8 @@ input[type="number"] {
     position: relative;
     opacity: 1;
     z-index: 1;
-    transition: opacity .5s;
-    transition-delay: .5s;
+    transition: opacity .2s;
+    transition-delay: .2s;
     overflow: visible;
     max-width: 110%;
 }
@@ -114,7 +114,7 @@ input[type="number"] {
     border-radius: 10px;
     text-align: center;
     max-width: 320px;
-    transition: .5s;
+    transition: .2s;
 }
 
 .effort {
@@ -127,7 +127,7 @@ input[type="number"] {
     border-radius: 10px;
     text-align: center;
     max-width: 300px;
-    transition: .5s;
+    transition: .2s;
 }
 
 .new-effort {
@@ -188,7 +188,7 @@ input[type="number"] {
     border-radius: 10px;
     text-align: center;
     max-width: 300px;
-    transition: .5s;
+    transition: .2s;
 }
 /*
 .algorithm {
@@ -200,7 +200,7 @@ input[type="number"] {
     border-radius: 10px;
     text-align: center;
     max-width: 300px;
-    transition: .5s;
+    transition: .2s;
 }
 */
 

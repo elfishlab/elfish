@@ -73,7 +73,7 @@ function reloadDataIntoDom() {
                 console.log("\t\tAdded effort " + e + ": " + eName + " (" + value + ")");
                 recomputeValues(s,g);
             }
-            updatePlot(s,g);
+            PlotUpdatePlot(s,g);
         }
     }
 
@@ -84,10 +84,10 @@ function reloadDataIntoDom() {
     }
 
     // Updates the method selector, reflecting the stored value.
-    setMethodDropdown(window.elfish.method);
+    ViewSetMethodDropdown(window.elfish.method);
 
     // Updates the confidence threshold settings.
-    updateConfidence(window.elfish.confidence);
+    ViewUpdateConfidence(window.elfish.confidence);
 }
 
 
@@ -118,22 +118,15 @@ function createNewSpecies () {
 }
 
 function createNewGroup (specie) {
-    if (specie >= window.elfish.species.length || specie < 0) {
+    if (specie >= window.elfish.species.length || specie < 0)
         throw new Error("specie must be exisiting id: 0 <= " + specie + " < " + window.elfish.species.length);
-    }
-
-    console.log("createNewGroup(" + specie + ")");
 
     var species = window.elfish.species[specie];
     var groups = species.groups;
 
     var newGroupId = groups.length;
-
     groups.push({name:"Group " + newGroupId, efforts: []});
-
-    efGUI.domGroup(newGroupId, "Gruppe", specie);
-
-    console.log("\tgroups: " + groups);
+    efGUI.domGroup(newGroupId, "Group", specie);
 
     populateGroupsWithEfforts();
 
@@ -164,9 +157,6 @@ function createNewEffortForGroup (effortName, groupId, speciesId) {
         console.error("Could not create effort: no group with id " + groupId);
         return;
     }
-
-    console.log("createNewEffortForGroup(" + effortName + "," + groupId + ", " +
-                speciesId + ")");
 
     if (!effortName) {
         console.log("Creating effort without predefined name");
@@ -206,7 +196,7 @@ function exportCSV () {
             // INPUT
             csv += "\n" + groups[g].name;
             for (var e = 0; e < efforts.length; e++) {
-                csv += "," + getInputValue(s,g,e);
+                csv += "," + ViewGetInputValue(s,g,e);
             }
 
             // EST
@@ -215,7 +205,7 @@ function exportCSV () {
                 if (e <= 0)
                     csv += ",---";
                 else
-                    csv += "," + getEst(s,g,e);
+                    csv += "," + ViewGetEst(s,g,e);
             }
 
             // k/E
@@ -224,7 +214,7 @@ function exportCSV () {
                 if (e <= 0)
                     csv += ",---";
                 else
-                    csv += "," + getKe(s,g,e);
+                    csv += "," + ViewGetKe(s,g,e);
             }
 
             // T/E
@@ -233,7 +223,7 @@ function exportCSV () {
                 if (e <= 0)
                     csv += ",---";
                 else
-                    csv += "," + getTe(s,g,e);
+                    csv += "," + ViewGetTe(s,g,e);
             }
         }
         csv += "\n";
@@ -253,32 +243,31 @@ function computeValue(s,g,e,vals) {
     }
 
     var estString = ElfishMathEstimateString(arr,window.elfish.method);
-    console.log("picked method " + window.elfish.method + " :::: " + estString);
-
-    setEst(s,g,e, estString);
+    ModelSetEst(s,g,e, estString);
+    ViewSetEst(s,g,e, estString);
 
     var ciSlashE = "---";
     var ciSlashEval = ElfishMathCIslashE(arr, window.elfish.method);
     if (ciSlashEval >= 0)
         ciSlashE = ciSlashEval.toFixed(3);
-    setKe(s,g,e, ciSlashE);
+    ModelSetKe(s,g,e, ciSlashE); // model
+    ViewSetKe(s,g,e, ciSlashE);  // view
 
     // T / E
     var tSlashE = "---";
     var tSlashEval = ElfishMathTSlashE(arr, window.elfish.method);
     if (tSlashEval >= 0)
         tSlashE = tSlashEval.toFixed(3);
-    setTe(s,g,e, tSlashE);
-
-    // this may happen on init
-    setEstClass(s,g,e,"est");
+    ModelSetTe(s,g,e, tSlashE);
+    ViewSetTe(s,g,e, tSlashE);
+    ViewSetEstClass(s,g,e,"est");
 
     // marking effort boxes as green when below given confidence
     if (ElfishMathIsConfident(arr, window.elfish.confidence,
                               window.elfish.method))
-        addEffortBoxClass(s,g,e, "confident");
+        ViewAddEffortBoxClass(s,g,e, "confident");
     else
-        removeEffortBoxClass(s,g,e, "confident");
+        ViewRemoveEffortBoxClass(s,g,e, "confident");
 }
 
 function recomputeValues(s,g) {
@@ -291,7 +280,7 @@ function recomputeValues(s,g) {
 
     var vals = [];
     for (var e = 0; e < efforts.length; e++) {
-        vals.push(getInputValue(s,g,e));
+        vals.push(ViewGetInputValue(s,g,e));
 
         if (e > 0) {
             // one effort is not enough.
@@ -421,7 +410,7 @@ function run () {
 
             recomputeValues(s,g);
             store();
-            updatePlot(s,g);
+            PlotUpdatePlot(s,g);
         });
 
     $( ".app")
@@ -434,19 +423,6 @@ function run () {
         .delegate(".group-plot", "click", function (e) {
             $(e.currentTarget).find("canvas").toggle(200);
         });
-}
-
-function setSummary(sp, gr, numEfforts, est, totalCatch, method) {
-    var elt = $(".group-summary[data-group-id="+gr+"][data-specie-id="+sp+"]")[0];
-    if (!elt)
-        return false;
-    var data = "";
-    data += "<p>Efforts = " + numEfforts + "</p>";
-    data += "<p>N̂ = " + est + "</p>";
-    data += "<p>T = " + totalCatch + "</p>";
-    data += "<p>M = " + window.elfish.method + "</p>";
-    elt.innerHTML = data;
-    return true;
 }
 
 
@@ -467,7 +443,8 @@ function updateSummary (sp,gr) {
     }
 
     var est = ElfishMathEstimateString(arr, window.elfish.method);
-    setSummary(sp, gr, numOfEfforts, est, totalCatch, window.elfish.method);
+    var elt = $(".group-summary[data-group-id="+gr+"][data-specie-id="+sp+"]")[0];
+    ViewSetSummary(elt, sp, gr, numOfEfforts, est, totalCatch, window.elfish.method);
 }
 
 
@@ -482,7 +459,8 @@ $(function () {
         retrieve();
     }
     run();
-    updatePlot(0, 0);
+    PlotUpdatePlot(0, 0);
+    ViewUpdateConfidence(window.elfish.confidence);
 });
 
 function setMethod(mt) {
@@ -490,8 +468,6 @@ function setMethod(mt) {
         window.elfish.method = "zippin";
     else
         window.elfish.method = "cs";
-
-    console.log("Method: " + window.elfish.method);
     reloadDataIntoDom();
 }
 
@@ -510,7 +486,7 @@ function setConfidence(val) {
     window.elfish.confidence = val;
     store();
 
-    updateConfidence(val);
+    ViewUpdateConfidence(val);
     reloadDataIntoDom();
 
     console.log("Confidence: ", val);

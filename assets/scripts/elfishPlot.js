@@ -1,17 +1,16 @@
-function plotGetName(sp, gr) {
+function PlotGetName(sp, gr) {
     return window.elfish.species[sp].name + ": " +
         window.elfish.species[sp].groups[gr].name;
 }
 
-function plotIsValidIndices(sp, gr) {
+function PlotIsValidIndices(sp, gr) {
     return window.elfish.species.length > sp
         && window.elfish.species[sp].groups.length > gr
         && window.elfish.species[sp].groups[gr].efforts.length > 0;
 }
 
-function plotOnNewCanvas(sp, gr) {
+function PlotCreateNewCanvas(sp, gr) {
     var selector = ".canvas-container[data-group-id='" + gr + "'][data-specie-id='" + sp + "']";
-    console.log("plot selector: " + selector);
 
     var canvas;
     var canvasContainer = $(selector)[0];
@@ -50,13 +49,13 @@ function allNegative(arr) {
     return true;
 }
 
-function updatePlot(sp, gr) {
+function PlotUpdatePlot(sp, gr) {
     var arr = [];
     var est = [];
     var cf = [];
     var labels = [];
 
-    if (plotIsValidIndices(sp, gr)) {
+    if (PlotIsValidIndices(sp, gr)) {
         var efforts = window.elfish.species[sp].groups[gr].efforts;
         for (var i = 0; i < efforts.length; i++) {
             arr.push(efforts[i].value);
@@ -74,7 +73,7 @@ function updatePlot(sp, gr) {
     if (est.length < 1 || allNegative(est))
         return;
 
-    var chartctx = plotOnNewCanvas(sp, gr);
+    var chartctx = PlotCreateNewCanvas(sp, gr);
     if (chartctx == null) {
         console.error("could not find canvas for sp=" + sp + ", gr=" + gr);
         return;
