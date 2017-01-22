@@ -21,11 +21,19 @@ function plotOnNewCanvas(sp, gr) {
         return null;
     }
 
+    var canvasHidden = false;
     while (canvasContainer.firstChild) {
-        canvasContainer.removeChild(canvasContainer.firstChild);
+        var child = canvasContainer.firstChild;
+        if (child.tagName == "CANVAS") {
+            if (child.style.display == "none")
+                canvasHidden = true;
+        }
+        canvasContainer.removeChild(child);
     }
+
     canvas = canvasContainer.appendChild(document.createElement("canvas"));
-    canvas.setAttribute("style", "display: none");
+    if (canvasHidden)
+        canvas.style.display = "none";
 
     if (!canvas) {
         console.error("canvas null for " + sp + ", " + gr);
