@@ -79,11 +79,11 @@
              data-group-id="{{group.id}}"
              data-specie-id="{{group.specieid}}">
           <h4>Plot</h4>
-          <canvas style="display:none"
-                  class="canvas-group-plot"
-                  data-group-id="{{group.id}}"
-                  data-specie-id="{{group.specieid}}">
-          </canvas>
+          <div class="canvas-container"
+               data-group-id="{{group.id}}"
+               data-specie-id="{{group.specieid}}">
+            <canvas style="display:none"></canvas>
+          </div>
         </div>
         <div class="group-efforts"
              data-specie-id="{{group.specieid}}"
