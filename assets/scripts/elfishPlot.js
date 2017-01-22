@@ -10,16 +10,28 @@ function plotIsValidIndices(sp, gr) {
 }
 
 function plotOnNewCanvas(sp, gr) {
-    var selector = "canvas.canvas-group-plot[data-group-id='" + gr + "'][data-specie-id='" + sp + "']";
+    var selector = ".canvas-container[data-group-id='" + gr + "'][data-specie-id='" + sp + "']";
     console.log("plot selector: " + selector);
-    // TODO follow http://stackoverflow.com/a/25064035
-    var canvas = $(selector);
-    console.log("plot canvas: " + canvas);
-    if (canvas == null){
-        console.log("canvas null for " + sp + ", " + gr);
+
+    var canvas;
+    var canvasContainer = $(selector)[0];
+
+    if (canvasContainer == null){
+        console.error("canvas container null for " + sp + ", " + gr);
         return null;
     }
-    return canvas[0].getContext("2d");
+
+    while (canvasContainer.firstChild) {
+        canvasContainer.removeChild(canvasContainer.firstChild);
+    }
+    canvas = canvasContainer.appendChild(document.createElement("canvas"));
+
+    if (!canvas) {
+        console.error("canvas null for " + sp + ", " + gr);
+        return null;
+    }
+
+    return canvas.getContext("2d");
 }
 
 function allNegative(arr) {
