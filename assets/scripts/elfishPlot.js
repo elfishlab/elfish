@@ -9,9 +9,10 @@ function plotIsValidIndices(sp, gr) {
         && window.elfish.species[sp].groups[gr].efforts.length > 0;
 }
 
-function plotFindCanvas(sp, gr) {
+function plotOnNewCanvas(sp, gr) {
     var selector = "canvas.canvas-group-plot[data-group-id='" + gr + "'][data-specie-id='" + sp + "']";
     console.log("plot selector: " + selector);
+    // TODO follow http://stackoverflow.com/a/25064035
     var canvas = $(selector);
     console.log("plot canvas: " + canvas);
     if (canvas == null){
@@ -52,7 +53,7 @@ function updatePlot(sp, gr) {
     if (est.length < 1 || allNegative(est))
         return;
 
-    var chartctx = plotFindCanvas(sp, gr);
+    var chartctx = plotOnNewCanvas(sp, gr);
     if (chartctx == null) {
         console.error("could not find canvas for sp=" + sp + ", gr=" + gr);
         return;
@@ -79,6 +80,13 @@ function updatePlot(sp, gr) {
         options: {
             legend: {
                 display: false
+            },
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        beginAtZero: true
+                    }
+                }]
             }
         }
     });
