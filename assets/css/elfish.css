@@ -188,7 +188,7 @@ input[type="number"] {
     border-radius: 10px;
     text-align: center;
     max-width: 300px;
-    transition: .5s;
+    transition: .2s;
 }
 /*
 .algorithm {
