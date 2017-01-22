@@ -120,11 +120,11 @@ function ViewSetSummary(elt, sp, gr, numEfforts, est, totalCatch, method) {
     return true;
 }
 
-function confidenceFieldChanged(val) {
+function ViewConfidenceFieldChanged(val) {
     setConfidence(val);
 }
 
-function confidenceRangeChanged(val) {
+function ViewConfidenceRangeChanged(val) {
     setConfidence(val / 1000);
 }
 
@@ -135,10 +135,9 @@ function confidenceRangeChanged(val) {
  *
  * @param  val - a number between and including 0.001 and 1.
  */
-function updateConfidence(val) {
+function ViewUpdateConfidence(val) {
     var range = document.getElementsByName("confidence-range")[0];
     var numberField = document.getElementsByName("confidence-val")[0];
     numberField.value = val;
     range.value = val * 1000;
 }
-

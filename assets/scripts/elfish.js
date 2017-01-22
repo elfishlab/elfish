@@ -73,7 +73,7 @@ function reloadDataIntoDom() {
                 console.log("\t\tAdded effort " + e + ": " + eName + " (" + value + ")");
                 recomputeValues(s,g);
             }
-            updatePlot(s,g);
+            PlotUpdatePlot(s,g);
         }
     }
 
@@ -87,7 +87,7 @@ function reloadDataIntoDom() {
     ViewSetMethodDropdown(window.elfish.method);
 
     // Updates the confidence threshold settings.
-    updateConfidence(window.elfish.confidence);
+    ViewUpdateConfidence(window.elfish.confidence);
 }
 
 
@@ -118,22 +118,15 @@ function createNewSpecies () {
 }
 
 function createNewGroup (specie) {
-    if (specie >= window.elfish.species.length || specie < 0) {
+    if (specie >= window.elfish.species.length || specie < 0)
         throw new Error("specie must be exisiting id: 0 <= " + specie + " < " + window.elfish.species.length);
-    }
-
-    console.log("createNewGroup(" + specie + ")");
 
     var species = window.elfish.species[specie];
     var groups = species.groups;
 
     var newGroupId = groups.length;
-
     groups.push({name:"Group " + newGroupId, efforts: []});
-
-    efGUI.domGroup(newGroupId, "Gruppe", specie);
-
-    console.log("\tgroups: " + groups);
+    efGUI.domGroup(newGroupId, "Group", specie);
 
     populateGroupsWithEfforts();
 
@@ -164,9 +157,6 @@ function createNewEffortForGroup (effortName, groupId, speciesId) {
         console.error("Could not create effort: no group with id " + groupId);
         return;
     }
-
-    console.log("createNewEffortForGroup(" + effortName + "," + groupId + ", " +
-                speciesId + ")");
 
     if (!effortName) {
         console.log("Creating effort without predefined name");
@@ -253,7 +243,6 @@ function computeValue(s,g,e,vals) {
     }
 
     var estString = ElfishMathEstimateString(arr,window.elfish.method);
-    console.log("picked method " + window.elfish.method + " :::: " + estString);
     ModelSetEst(s,g,e, estString);
     ViewSetEst(s,g,e, estString);
 
@@ -261,7 +250,7 @@ function computeValue(s,g,e,vals) {
     var ciSlashEval = ElfishMathCIslashE(arr, window.elfish.method);
     if (ciSlashEval >= 0)
         ciSlashE = ciSlashEval.toFixed(3);
-    ModelSetCie(s,g,e, ciSlashE); // model
+    ModelSetKe(s,g,e, ciSlashE); // model
     ViewSetKe(s,g,e, ciSlashE);  // view
 
     // T / E
@@ -270,6 +259,7 @@ function computeValue(s,g,e,vals) {
     if (tSlashEval >= 0)
         tSlashE = tSlashEval.toFixed(3);
     ModelSetTe(s,g,e, tSlashE);
+    ViewSetTe(s,g,e, tSlashE);
     ViewSetEstClass(s,g,e,"est");
 
     // marking effort boxes as green when below given confidence
@@ -420,7 +410,7 @@ function run () {
 
             recomputeValues(s,g);
             store();
-            updatePlot(s,g);
+            PlotUpdatePlot(s,g);
         });
 
     $( ".app")
@@ -469,7 +459,8 @@ $(function () {
         retrieve();
     }
     run();
-    updatePlot(0, 0);
+    PlotUpdatePlot(0, 0);
+    ViewUpdateConfidence(window.elfish.confidence);
 });
 
 function setMethod(mt) {
@@ -477,8 +468,6 @@ function setMethod(mt) {
         window.elfish.method = "zippin";
     else
         window.elfish.method = "cs";
-
-    console.log("Method: " + window.elfish.method);
     reloadDataIntoDom();
 }
 
@@ -497,7 +486,7 @@ function setConfidence(val) {
     window.elfish.confidence = val;
     store();
 
-    updateConfidence(val);
+    ViewUpdateConfidence(val);
     reloadDataIntoDom();
 
     console.log("Confidence: ", val);
