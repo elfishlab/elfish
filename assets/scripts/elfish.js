@@ -121,13 +121,52 @@ function getInputValue(sp, gr, ef) {
 }
 
 
+
+function getEffortBox(s,g,e) {
+    var effortboxId = "effort" + idString(s,g,e);
+    var effortbox = document.getElementById(effortboxId);
+    return effortbox;
+}
+
+function addEffortBoxClass(s,g,e,cls) {
+    var eb = getEffortBox(s,g,e);
+    if (!eb)
+        return false;
+    var lst = eb.classList;
+    if (!lst.contains(cls))
+        lst.add(cls);
+    return true;
+}
+
+function removeEffortBoxClass(s,g,e,cls) {
+    var eb = getEffortBox(s,g,e);
+    if (!eb)
+        return false;
+    var lst = eb.classList;
+    if (lst.contains(cls))
+        lst.remove(cls);
+    return true;
+}
+
+function setEstClass(s,g,e,cls) {
+    var idn = "est" + idString(s,g,e);
+    var elt = document.getElementById(idn);
+    if (!elt)
+        return false;
+
+    elt.className = cls;
+    return true;
+}
+
 function getInput(s,g,e) {
-    var postfix = "-" + s + "-" + g + "-" + e;
-
-    // TODO use JQuery instead of postfix on id of dom elts
-    var key = "ci" + postfix;
-
+    var key = "ci" + idString(s,g,e);
     return document.getElementById(key);
+}
+
+function idString(s,g,e) {
+    // TODO use JQuery instead of postfix on id of dom elts
+    var postfix = "-" + s + "-" + g + "-" + e;
+    return postfix;
 }
 
 function createNewSpecies () {
@@ -213,38 +252,38 @@ function createNewEffortForGroup (effortName, groupId, speciesId) {
 /*
  document content manipulations
  */
-function setEst(postfix, val) {
-    var elt = document.getElementById("est" + postfix);
+function setEst(s,g,e, val) {
+    var elt = document.getElementById("est" + idString(s,g,e));
     if (elt)
         elt.innerHTML = "N̂ =" + val;
 }
 
-function setKe(postfix, val) {
-    var elt = document.getElementById("ke" + postfix);
+function setKe(s,g,e, val) {
+    var elt = document.getElementById("ke" + idString(s,g,e));
     if (elt)
         elt.innerHTML = "CI/N̂ =" + val;
 }
 
-function setTe(postfix, val) {
-    var elt = document.getElementById("te" + postfix);
+function setTe(s,g,e, val) {
+    var elt = document.getElementById("te" + idString(s,g,e));
     if (elt)
         elt.innerHTML = "T/N̂ =" + val;
 }
 
-function getEst(postfix) {
-    var elt = document.getElementById("est" + postfix);
+function getEst(s,g,e) {
+    var elt = document.getElementById("est" + idString(s,g,e));
     if (elt)
         return elt.innerHTML;
     return 0;
 }
-function getKe(postfix) {
-    var elt = document.getElementById("ke" + postfix);
+function getKe(s,g,e) {
+    var elt = document.getElementById("ke" + idString(s,g,e));
     if (elt)
         return elt.innerHTML;
     return 0;
 }
-function getTe(postfix) {
-    var elt = document.getElementById("te" + postfix);
+function getTe(s,g,e) {
+    var elt = document.getElementById("te" + idString(s,g,e));
     if (elt)
         return elt.innerHTML;
     return 0;
@@ -277,37 +316,28 @@ function exportCSV () {
             // EST
             csv += "\n";
             for (var e = 0; e < efforts.length; e++) {
-                // TODO instead of postfix id on dom element, do JQuery!
-                var postfix = "-" + s + "-" + g + "-" + e;
-
                 if (e <= 0)
                     csv += ",---";
                 else
-                    csv += "," + getEst(postfix);
+                    csv += "," + getEst(s,g,e);
             }
 
             // k/E
             csv += "\n";
             for (var e = 0; e < efforts.length; e++) {
-                // TODO instead of postfix id on dom element, do JQuery!
-                var postfix = "-" + s + "-" + g + "-" + e;
-
                 if (e <= 0)
                     csv += ",---";
                 else
-                    csv += "," + getKe(postfix);
+                    csv += "," + getKe(s,g,e);
             }
 
             // T/E
             csv += "\n";
             for (var e = 0; e < efforts.length; e++) {
-                // TODO instead of postfix id on dom element, do JQuery!
-                var postfix = "-" + s + "-" + g + "-" + e;
-
                 if (e <= 0)
                     csv += ",---";
                 else
-                    csv += "," + getTe(postfix);
+                    csv += "," + getTe(s,g,e);
             }
         }
         csv += "\n";
@@ -318,7 +348,6 @@ function exportCSV () {
 
 function computeValue(s,g,e,vals) {
     var arr = [];
-    var postfix = "-" + s + "-" + g + "-" + e;
     for (var i = 0; i < vals.length; i++) {
         var val = vals[i];
         if (val === "")
@@ -330,35 +359,30 @@ function computeValue(s,g,e,vals) {
     var estString = ElfishMathEstimateString(arr,window.elfish.method);
     console.log("picked method " + window.elfish.method + " :::: " + estString);
 
-    setEst(postfix, estString);
+    setEst(s,g,e, estString);
 
     var ciSlashE = "---";
     var ciSlashEval = ElfishMathCIslashE(arr, window.elfish.method);
     if (ciSlashEval >= 0)
         ciSlashE = ciSlashEval.toFixed(3);
-    setKe(postfix, ciSlashE);
+    setKe(s,g,e, ciSlashE);
 
     // T / E
     var tSlashE = "---";
     var tSlashEval = ElfishMathTSlashE(arr, window.elfish.method);
     if (tSlashEval >= 0)
         tSlashE = tSlashEval.toFixed(3);
-    setTe(postfix, tSlashE);
+    setTe(s,g,e, tSlashE);
 
     // this may happen on init
-    if (!document.getElementById("est" + postfix))
-        return;
-
-    document.getElementById("est" + postfix).className = "est";
+    setEstClass(s,g,e,"est");
 
     // marking effort boxes as green when below given confidence
-    var effortboxId = "effort-" + s + "-" + g + "-" + e;
-    var effortbox = document.getElementById(effortboxId);
     if (ElfishMathIsConfident(arr, window.elfish.confidence,
                               window.elfish.method))
-        effortbox.className = "effort confident";
+        addEffortBoxClass(s,g,e, "confident");
     else
-        effortbox.className = "effort";
+        removeEffortBoxClass(s,g,e, "confident");
 }
 
 function recomputeValues(s,g) {
