@@ -149,7 +149,7 @@
       <div class="settings-box confidence-threshold">
         Confidence threshold:
         <input type="range" name="confidence-range" min=1 max=1000 onchange="confidenceRangeChanged(this.value)">
-        <input type="decimal" min=0.001 max=1 name="confidence-val" value="0" onkeyup="confidenceFieldChanged(this.value)">
+        <input type="decimal" min=0.001 max=1 name="confidence-val" value="0" onkeyup="ViewConfidenceFieldChanged(this.value)">
       </div>
       <input type="button" value="Copy to clipboard"
 	         onClick="androidCopy()" />
