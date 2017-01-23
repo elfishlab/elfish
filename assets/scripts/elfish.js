@@ -175,6 +175,7 @@ function createNewEffortForGroup (effortName, groupId, speciesId) {
 
     group.efforts.push({name: effortName, value: 0});
     efGUI.domEffort((group.efforts.length-1), effortName, groupId, speciesId, group.efforts);
+    ViewGiveFocusToInput(speciesId,groupId,group.efforts.length-1);
 }
 
 
@@ -203,7 +204,7 @@ function exportCSV () {
             csv += "\n";
             for (var e = 0; e < efforts.length; e++) {
                 if (e <= 0)
-                    csv += ",---";
+                    csv += ",N/A";
                 else
                     csv += "," + ViewGetEst(s,g,e);
             }
@@ -212,7 +213,7 @@ function exportCSV () {
             csv += "\n";
             for (var e = 0; e < efforts.length; e++) {
                 if (e <= 0)
-                    csv += ",---";
+                    csv += ",N/A";
                 else
                     csv += "," + ViewGetKe(s,g,e);
             }
@@ -221,7 +222,7 @@ function exportCSV () {
             csv += "\n";
             for (var e = 0; e < efforts.length; e++) {
                 if (e <= 0)
-                    csv += ",---";
+                    csv += ",N/A";
                 else
                     csv += "," + ViewGetTe(s,g,e);
             }
@@ -247,7 +248,7 @@ function computeValue(s,g,e,vals) {
     ViewSetEst(s,g,e, estString);
 
     // CI / E (K/E)
-    var ciSlashE = "---";
+    var ciSlashE = "N/A";
     var ciSlashEval = ElfishMathCIslashE(arr, window.elfish.method);
     if (ciSlashEval >= 0)
         ciSlashE = ciSlashEval.toFixed(3);
@@ -255,7 +256,7 @@ function computeValue(s,g,e,vals) {
     ViewSetKe(s,g,e, ciSlashE);  // view
 
     // T / E
-    var tSlashE = "---";
+    var tSlashE = "N/A";
     var tSlashEval = ElfishMathTSlashE(arr, window.elfish.method);
     if (tSlashEval >= 0)
         tSlashE = tSlashEval.toFixed(3);
