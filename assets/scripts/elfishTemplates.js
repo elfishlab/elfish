@@ -27,9 +27,6 @@ efGUI.domGroup = function (groupId, groupName, specieId) {
 
 
 efGUI.domEffort = function (effortId, effortName, groupId, specieId, value, efforts) {
-    console.log("domEffort(" + effortId + "," + effortName + "," +
-        groupId + "," + specieId + "," + value + ")");
-
     var gEfforts = $(".group-efforts[data-id=group-"+ groupId +"][data-specie-id="+specieId+"] .group-efforts-inner");
     var placeholder = gEfforts.children(".placeholder");
 

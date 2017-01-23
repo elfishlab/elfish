@@ -108,13 +108,13 @@ function PlotUpdatePlot(sp, gr) {
                     },
                     scaleLabel: {
                         display: true,
-                        labelString: 'estimate'
+                        labelString: 'Estimate (N̂)'
                     }
                 }],
                 xAxes: [{
                     scaleLabel: {
                         display: true,
-                        labelString: 'effort'
+                        labelString: 'Effort #'
                     }
                 }]
             }
