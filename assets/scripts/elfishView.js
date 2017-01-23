@@ -1,19 +1,19 @@
 function ViewSetEst(s,g,e, val) {
     var elt = document.getElementById("est" + ViewIdString(s,g,e));
     if (elt)
-        elt.innerHTML = "N̂ =" + val;
+        elt.innerHTML = val;
 }
 
 function ViewSetKe(s,g,e, val) {
     var elt = document.getElementById("ke" + ViewIdString(s,g,e));
     if (elt)
-        elt.innerHTML = "CI/N̂ =" + val;
+        elt.innerHTML = val;
 }
 
 function ViewSetTe(s,g,e, val) {
     var elt = document.getElementById("te" + ViewIdString(s,g,e));
     if (elt)
-        elt.innerHTML = "T/N̂ =" + val;
+        elt.innerHTML = val;
 }
 
 function ViewGetEst(s,g,e) {
@@ -119,11 +119,13 @@ function ViewSetMethodDropdown(meth) {
 function ViewSetSummary(elt, sp, gr, numEfforts, est, totalCatch, method) {
     if (!elt)
         return false;
-    var data = "";
-    data += "<p>Efforts = " + numEfforts + "</p>";
-    data += "<p>N̂ = " + est + "</p>";
-    data += "<p>T = " + totalCatch + "</p>";
-    data += "<p>M = " + window.elfish.method + "</p>";
+    var clsn = "summary-" + sp + "-" + gr;
+    var data = "<table class=\""+clsn+"\">";
+    data += "<tr><td>Efforts</td><td>" + numEfforts + "</td></tr>";
+    data += "<tr><td>Estimate</td><td>" + est + "</td></tr>";
+    data += "<tr><td>Total catch</td><td>" + totalCatch + "</td></tr>";
+    data += "<tr><td>Method</td><td>" + window.elfish.method + "</td></tr>";
+    data += "</table>";
     elt.innerHTML = data;
     return true;
 }

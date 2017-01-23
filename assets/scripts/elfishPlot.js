@@ -59,7 +59,7 @@ function PlotUpdatePlot(sp, gr) {
         var efforts = window.elfish.species[sp].groups[gr].efforts;
         for (var i = 0; i < efforts.length; i++) {
             arr.push(efforts[i].value);
-            labels.push("e" + (i+1)); // effort2, effort3, etc
+            labels.push(i+1); // effort2, effort3, etc
             est.push(ElfishMathEstimate(arr, window.elfish.method));
             cf.push(ElfishMathConfidenceInterval(arr, window.elfish.method));
         }
@@ -70,7 +70,7 @@ function PlotUpdatePlot(sp, gr) {
     est.shift();
     cf.shift();
 
-    if (est.length < 1 || allNegative(est))
+    if (est.length < 2 || allNegative(est))
         return;
 
     var chartctx = PlotCreateNewCanvas(sp, gr);
@@ -105,6 +105,16 @@ function PlotUpdatePlot(sp, gr) {
                 yAxes: [{
                     ticks: {
                         beginAtZero: true
+                    },
+                    scaleLabel: {
+                        display: true,
+                        labelString: 'estimate'
+                    }
+                }],
+                xAxes: [{
+                    scaleLabel: {
+                        display: true,
+                        labelString: 'effort'
                     }
                 }]
             }

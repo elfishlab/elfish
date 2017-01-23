@@ -130,6 +130,10 @@ input[type="number"] {
     transition: .2s;
 }
 
+.effort table {
+    margin: 0 auto;
+}
+
 .new-effort {
     max-width: 0;
     overflow: hidden;

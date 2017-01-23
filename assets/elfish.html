@@ -75,7 +75,6 @@
              class="group-summary"
              data-group-id="{{group.id}}"
              data-specie-id="{{group.specieid}}">
-          Summary
         </div>
         <div class="group-plot"
              data-group-id="{{group.id}}"
@@ -114,15 +113,24 @@
                data-input-group="{{effort.groupid}}"
                data-input-effort="{{effort.id}}"
                value="{{effort.value}}" />
-        <div class="estimate" id="est-{{effort.specieid}}-{{effort.groupid}}-{{effort.id}}">
-          {{effort.est}}
-        </div>
-        <div class="ke" id="ke-{{effort.specieid}}-{{effort.groupid}}-{{effort.id}}">
+        <table
+           class="effort-table"
+           id="effort-table-{{effort.specieid}}-{{effort.groupid}}-{{effort.id}}">
+          <tr><td>N̂</td>
+            <td class="estimate"
+             id="est-{{effort.specieid}}-{{effort.groupid}}-{{effort.id}}">
+              {{effort.est}}
+            </td>
+          </tr>
+          <tr><td>CI/N̂</td>
+            <td class="ke" id="ke-{{effort.specieid}}-{{effort.groupid}}-{{effort.id}}">
           {{effort.ke}}
-        </div>
-        <div class="te" id="te-{{effort.specieid}}-{{effort.groupid}}-{{effort.id}}">
-          {{effort.te}}
-        </div>
+          </td></tr>
+          <tr><td>T/N̂</td>
+            <td class="te" id="te-{{effort.specieid}}-{{effort.groupid}}-{{effort.id}}">
+              {{effort.te}}
+          </td></tr>
+        </table>
       </div>
     </script>
 
