@@ -115,11 +115,13 @@ function createNewSpecies () {
     efGUI.domSpecie(sId, "Species", true);
     efGUI.renderTabs();
     efGUI.showSpecie(sId);
+    createNewGroup(sId);
 }
 
 function createNewGroup (specie) {
     if (specie >= window.elfish.species.length || specie < 0)
-        throw new Error("specie must be exisiting id: 0 <= " + specie + " < " + window.elfish.species.length);
+        throw new Error("specie must be exisiting id: 0 <= " + specie
+                        + " < " + window.elfish.species.length);
 
     var species = window.elfish.species[specie];
     var groups = species.groups;
@@ -174,8 +176,13 @@ function createNewEffortForGroup (effortName, groupId, speciesId) {
     effortName += " " + (1+group.efforts.length);
 
     group.efforts.push({name: effortName, value: 0});
-    efGUI.domEffort((group.efforts.length-1), effortName, groupId, speciesId, group.efforts);
-    ViewGiveFocusToInput(speciesId,groupId,group.efforts.length-1);
+    efGUI.domEffort((group.efforts.length-1),
+                    effortName, groupId, speciesId, group.efforts);
+    // give focus to the new effort (first if newly created)
+    if (group.efforts.length <= 2)
+        ViewGiveFocusToInput(speciesId,groupId,0);
+    else
+        ViewGiveFocusToInput(speciesId,groupId,group.efforts.length-1);
 }
 
 
