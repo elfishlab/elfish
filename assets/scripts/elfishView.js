@@ -37,6 +37,12 @@ function ViewGetTe(s,g,e) {
 }
 
 
+function ViewGiveFocusToInput(s,g,e) {
+    var elt = document.getElementById("ci" + ViewIdString(s,g,e));
+    if (elt)
+        elt.focus();
+}
+
 
 function ViewGetInputValue(sp, gr, ef) {
     var elt = ViewGetInput(sp,gr,ef);

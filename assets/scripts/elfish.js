@@ -175,6 +175,7 @@ function createNewEffortForGroup (effortName, groupId, speciesId) {
 
     group.efforts.push({name: effortName, value: 0});
     efGUI.domEffort((group.efforts.length-1), effortName, groupId, speciesId, group.efforts);
+    ViewGiveFocusToInput(speciesId,groupId,group.efforts.length-1);
 }
 
 
