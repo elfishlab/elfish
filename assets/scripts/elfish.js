@@ -126,13 +126,14 @@ function createNewGroup (specie) {
     var species = window.elfish.species[specie];
     var groups = species.groups;
 
-    var newGroupId = groups.length;
-    groups.push({name:"Group " + newGroupId, efforts: []});
-    efGUI.domGroup(newGroupId, "Group", specie);
+    var gid = groups.length;
+    var gname = "Group " + (1+gid);
+    groups.push({name:gname, efforts: []});
+    efGUI.domGroup(gid, gname, specie);
 
     populateGroupsWithEfforts();
 
-    return newGroupId;
+    return gid;
 }
 
 
