@@ -161,6 +161,10 @@
         <input type="decimal" min=0.001 max=1 name="confidence-val" value="0"
                onkeyup="ViewConfidenceFieldChanged(this.value)">
       </div>
+      <div class="settings-box undo">
+        <input type="button" value="Undo effort creation"
+               onClick="undo()" />
+      </div>
       <input type="button" value="Copy to clipboard"
 	         onClick="androidCopy()" />
 

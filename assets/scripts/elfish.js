@@ -8,7 +8,8 @@ function initiateStorage() {
         minimumNumbersOfEfforts: 2,
         species: [],
         visibleSpecies: null,
-        method: "cs"
+        method: "cs",
+        history: []
     };
 }
 
@@ -184,6 +185,8 @@ function createNewEffortForGroup (effortName, groupId, speciesId) {
         ViewGiveFocusToInput(speciesId,groupId,0);
     else
         ViewGiveFocusToInput(speciesId,groupId,group.efforts.length-1);
+
+    ModelHistoryAddEffort(speciesId,groupId,group.efforts.length-1);
 }
 
 
@@ -508,4 +511,9 @@ function setConfidence(val) {
     refreshAllConfidences();
 
     console.log("Confidence: ", val);
+}
+
+function undo() {
+    ModelHistoryUndo();
+    reloadDataIntoDom();
 }
