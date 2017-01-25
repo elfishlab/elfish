@@ -104,7 +104,7 @@ function PlotUpdatePlot(sp, gr) {
             scales: {
                 yAxes: [{
                     ticks: {
-                        beginAtZero: true
+                        beginAtZero: false
                     },
                     scaleLabel: {
                         display: true,
