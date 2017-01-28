@@ -144,49 +144,42 @@ function populateGroupsWithEfforts() {
         for (var g = 0; g < window.elfish.species[s].groups.length; g++) {
             var gr = window.elfish.species[s].groups[g];
             while (gr.efforts.length < n) {
-                createNewEffortForGroup("", g, s);
+                createNewEffortForGroup(s, g, "");
             }
         }
     }
 }
 
+function generateEffortName() {
+    var effortName = "Effort";
+    if (window.elfish.species.length === 0 ||
+        window.elfish.species[0].groups.length === 0 ||
+        window.elfish.species[0].groups[0].efforts.length === 0)
+        return effortName;
+
+    var firstName = window.elfish.species[0].groups[0].efforts[0].name;
+    return ElfishUtilFirstToken(firstName);
+}
 
 /**
  *  Creates a new effort for the given group.
  */
-function createNewEffortForGroup (effortName, groupId, speciesId) {
-    var group = window.elfish.species[speciesId].groups[groupId];
-
-    if (!group) {
-        console.error("Could not create effort: no group with id " + groupId);
-        return;
-    }
-
-    if (!effortName) {
-        console.log("Creating effort without predefined name");
-        if (window.elfish.species.length === 0 ||
-            window.elfish.species[0].groups.length === 0 ||
-            window.elfish.species[0].groups[0].efforts.length === 0) {
-            effortName = "Effort";
-        } else {
-            var firstName = window.elfish.species[0].groups[0].efforts[0].name;
-            effortName = ElfishUtilFirstToken(firstName);
-        }
-    }
+function createNewEffortForGroup(s, g, eName) {
+    ModelAssertIndex(s,g,-1);
+    if (!eName)
+        eName = generateEffortName();
+    var group = window.elfish.species[s].groups[g];
+    var efLen = group.efforts.length;
 
     // "Effort 3" --- if this is the third effort
-    effortName += " " + (1+group.efforts.length);
-
-    group.efforts.push({name: effortName, value: 0});
-    efGUI.domEffort((group.efforts.length-1),
-                    effortName, groupId, speciesId, group.efforts);
+    eName += " " + (1+efLen);
+    ModelAddEffort(s,g, efLen, eName, 0);
+    efGUI.domEffort(efLen, eName, g, s, group.efforts);
     // give focus to the new effort (first if newly created)
-    if (group.efforts.length <= 2)
-        ViewGiveFocusToInput(speciesId,groupId,0);
+    if (efLen <= 2)
+        ViewGiveFocusToInput(s,g,0);
     else
-        ViewGiveFocusToInput(speciesId,groupId,group.efforts.length-1);
-
-    ModelHistoryAddEffort(speciesId,groupId,group.efforts.length-1);
+        ViewGiveFocusToInput(s,g,efLen);
 }
 
 
@@ -307,7 +300,7 @@ function run () {
             var groupParent = $($(evtObj.target).parents("[data-id]:first")[0]);
             var specieId = parseInt(groupParent.attr("data-specie-id"), 10);
             var groupId = parseInt(groupParent.attr("data-group-id"), 10);
-            createNewEffortForGroup("", groupId, specieId);
+            createNewEffortForGroup(specieId, groupId, "");
             store();
         });
 
@@ -351,9 +344,8 @@ function run () {
                 var ef = parseInt($(evtObj.target).attr("data-effort-header-effort"), 10);
 
                 var header = $(evtObj.target).text();
-                // FIXME TODO got this error:
-                // TypeError: window.elfish.species[sp].groups[gr].efforts[ef] is undefined elfish.js:377
-                // where 377 used to be the line immediately below.
+                // FIXME got this error:
+                // TypeError: window.elfish.species[sp].groups[gr].efforts[ef] is undefined
                 // can this happen if we click on + or on the hidden effort-thing?
                 window.elfish.species[sp].groups[gr].efforts[ef].name = header;
                 break;
@@ -511,6 +503,11 @@ function setConfidence(val) {
     refreshAllConfidences();
 
     console.log("Confidence: ", val);
+}
+
+function deleteEffort(s,g,e) {
+    ModelDeleteEffort(s,g,e);
+    reloadDataIntoDom();
 }
 
 function undo() {

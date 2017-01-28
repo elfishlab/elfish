@@ -104,6 +104,9 @@
             data-effort-header-group="{{effort.groupid}}"
             data-effort-header-effort="{{effort.id}}">
           {{effort.title}}
+          <input type="button" value="X"
+                 style="border:0;padding:0 0 5px 5px;margin:0 0 5px 5px;"
+                 onClick="deleteEffort({{effort.specieid}},{{effort.groupid}},{{effort.id}})" />
         </h4>
         <!-- input has id: ci-1-2-3 for sp 1, gr 2, eff 3, where ci is "catch input" -->
         <input type="number" min="0"
@@ -162,7 +165,7 @@
                onkeyup="ViewConfidenceFieldChanged(this.value)">
       </div>
       <div class="settings-box undo">
-        <input type="button" value="Undo effort creation"
+        <input type="button" value="Undo"
                onClick="undo()" />
       </div>
       <input type="button" value="Copy to clipboard"
