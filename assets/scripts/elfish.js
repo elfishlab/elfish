@@ -65,7 +65,7 @@ function reloadDataIntoDom() {
             efGUI.domGroup(g, gName, s);
 
             for (var e = 0; e < groups[g].efforts.length; e++) {
-                var eName = groups[g].efforts[e].name;
+                var eName =  "Effort " + (1+e);
                 var value =  groups[g].efforts[e].value;
                 if (value === "")
                     value = 0;
@@ -144,39 +144,26 @@ function populateGroupsWithEfforts() {
         for (var g = 0; g < window.elfish.species[s].groups.length; g++) {
             var gr = window.elfish.species[s].groups[g];
             while (gr.efforts.length < n) {
-                createNewEffortForGroup(s, g, "");
+                createNewEffortForGroup(s, g);
             }
         }
     }
 }
 
-function generateEffortName() {
-    var effortName = "Effort";
-    if (window.elfish.species.length === 0 ||
-        window.elfish.species[0].groups.length === 0 ||
-        window.elfish.species[0].groups[0].efforts.length === 0)
-        return effortName;
-
-    var firstName = window.elfish.species[0].groups[0].efforts[0].name;
-    return ElfishUtilFirstToken(firstName);
-}
-
 /**
  *  Creates a new effort for the given group.
  */
-function createNewEffortForGroup(s, g, eName) {
+function createNewEffortForGroup(s, g) {
     ModelAssertIndex(s,g,-1);
-    if (!eName)
-        eName = generateEffortName();
     var group = window.elfish.species[s].groups[g];
     var efLen = group.efforts.length;
 
     // "Effort 3" --- if this is the third effort
-    eName += " " + (1+efLen);
-    ModelAddEffort(s,g, efLen, eName, 0);
+    var eName = "Effort " + (1+efLen);
+    ModelAddEffort(s,g, efLen, 0);
     efGUI.domEffort(efLen, eName, g, s, group.efforts);
     // give focus to the new effort (first if newly created)
-    if (efLen <= 2)
+    if (efLen < 2)
         ViewGiveFocusToInput(s,g,0);
     else
         ViewGiveFocusToInput(s,g,efLen);
@@ -300,7 +287,7 @@ function run () {
             var groupParent = $($(evtObj.target).parents("[data-id]:first")[0]);
             var specieId = parseInt(groupParent.attr("data-specie-id"), 10);
             var groupId = parseInt(groupParent.attr("data-group-id"), 10);
-            createNewEffortForGroup(specieId, groupId, "");
+            createNewEffortForGroup(specieId, groupId);
             store();
         });
 
@@ -338,18 +325,6 @@ function run () {
             console.log("Edit done on: " + $(evtObj.target).attr("data-edit-header"));
 
             switch ($(evtObj.target).attr("data-edit-header")) {
-            case "effort":
-                var sp = parseInt($(evtObj.target).attr("data-effort-header-specie"), 10);
-                var gr = parseInt($(evtObj.target).attr("data-effort-header-group"), 10);
-                var ef = parseInt($(evtObj.target).attr("data-effort-header-effort"), 10);
-
-                var header = $(evtObj.target).text();
-                // FIXME got this error:
-                // TypeError: window.elfish.species[sp].groups[gr].efforts[ef] is undefined
-                // can this happen if we click on + or on the hidden effort-thing?
-                window.elfish.species[sp].groups[gr].efforts[ef].name = header;
-                break;
-
             case "group":
                 var sp = parseInt($(evtObj.target).attr("data-group-header-specie"), 10);
                 var gr = parseInt($(evtObj.target).attr("data-group-header-group"), 10);
@@ -369,28 +344,6 @@ function run () {
             }
             store();
         });
-
-
-
-
-    $('.app').on("keydown",'.editable', function(evtObj) {
-        if (evtObj.key == "Enter") {
-            console.log('disable edit for' + evtObj.target);
-            $(evtObj.target).blur();
-        } else if (evtObj.key == "Esc" || evtObj.key == "Escape" ) {
-            // TODO reset to old innerHTML
-            var sp = parseInt($(evtObj.target).attr("data-effort-header-specie"), 10);
-            var gr = parseInt($(evtObj.target).attr("data-effort-header-group"), 10);
-            var ef = parseInt($(evtObj.target).attr("data-effort-header-effort"), 10);
-            var old = window.elfish.species[sp].groups[gr].efforts[ef].name;
-
-            console.log('edit cancelled');
-            $(evtObj.target).blur();
-
-            window.elfish.species[sp].groups[gr].efforts[ef].name = old;
-            var header = $(evtObj.target).text(old);
-        }
-    });
 
     store();
 

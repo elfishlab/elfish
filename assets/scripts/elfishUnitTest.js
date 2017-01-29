@@ -235,11 +235,3 @@ pop = ElfishUtilPopulated(arr);
 unitTestAssertEqual(true,pop);
 
 unitTestAssertEqual(131, ElfishUtilSum([2,4,8,100,17]));
-
-unitTestAssertEqual("xyz", ElfishUtilFirstToken("xyz\n-a212"));
-unitTestAssertEqual("xyz", ElfishUtilFirstToken("xyz -2b12"));
-unitTestAssertEqual("xyz", ElfishUtilFirstToken("xyz\n-2c12"));
-unitTestAssertEqual("z", ElfishUtilFirstToken("z12c12"));
-unitTestAssertEqual("effort", ElfishUtilFirstToken("effort1"));
-unitTestAssertEqual("effort", ElfishUtilFirstToken("effort 123"));
-unitTestAssertEqual("effort", ElfishUtilFirstToken("effort1rggpty"));

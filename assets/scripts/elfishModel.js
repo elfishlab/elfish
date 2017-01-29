@@ -53,14 +53,13 @@ function ModelPopHistory() {
     return elt;
 }
 
-function ModelAddEffort(s,g,e,name,val) {
+function ModelAddEffort(s,g,e,val) {
     ModelAssertIndex(s,g,-1); // -1 since only s,g must exist
     var elt = {action:  ModelActionEffortAdd,
                species: s,
                group:   g,
-               effort:  e,
-               name:    name};
-    window.elfish.species[s].groups[g].efforts.push({name: name, value: val});
+               effort:  e};
+    window.elfish.species[s].groups[g].efforts.push({value: val});
     ModelAddHistory(elt);
 }
 
@@ -70,13 +69,11 @@ function ModelDeleteEffort(s,g,e) {
     if (sps[s].groups[g].efforts.length == 0)
         return false;
     var eff = sps[s].groups[g].efforts[e];
-    var name = eff.name;
     var value = eff.value;
     var elt = {action:  ModelActionEffortDel,
                species: s,
                group:   g,
                effort:  e,
-               name:    name,
                value:   value};
     window.elfish.species[s].groups[g].efforts.splice(e,1);
     ModelAddHistory(elt);
@@ -98,7 +95,7 @@ function ModelHistoryUndo() {
         break;
     case ModelActionEffortDel:
         ModelAssertIndex(s,g,e);
-        ModelAddEffort(s,g,e,elt.name,elt.value);
+        ModelAddEffort(s,g,e,elt.value);
         ModelPopHistory();
         break;
     default:
