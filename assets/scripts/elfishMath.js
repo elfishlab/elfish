@@ -180,13 +180,6 @@ function ElfishMathZippin(arr) {
         console.log("Zippin X below z_min for " + arr);
         return -1;
     }
-    else {
-        console.log("arr = " + arr);
-        console.log("t = " + t);
-        console.log("k = " + k);
-        console.log("X = " + x);
-        console.log("z_min = ((t-1)*(k-1)/2) - 1 = " + z_min);
-    }
     var hatN = t;
     for (var i = 0; i < window.elfish.upperlimit; i++) {
         var lhs = hatN + i;
