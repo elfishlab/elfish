@@ -105,6 +105,7 @@ function clearLocalStorage() {
     window.localStorage.removeItem("elfish");
     initiateStorage();
     $(".specie").remove();
+    $('body').toggleClass("side-stage-focused")
     efGUI.renderTabs();
 }
 
@@ -282,6 +283,10 @@ function recomputeValues(s,g) {
 
 
 function run () {
+    $( ".app" )
+        .delegate(".side-stage-trigger", "click", function(e) {
+        $('body').toggleClass("side-stage-focused")
+    })
     $( ".app" )
         .delegate(".placeholder", "click", function (evtObj) {
             var groupParent = $($(evtObj.target).parents("[data-id]:first")[0]);
