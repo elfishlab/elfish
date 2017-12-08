@@ -126,10 +126,9 @@ function createNewGroup (specie) {
 
     var species = window.elfish.species[specie];
     var groups = species.groups;
-
     var gid = groups.length;
     var gname = "Group " + (1+gid);
-    groups.push({name:gname, efforts: []});
+    ModelAddGroup(specie,gname);
     efGUI.domGroup(gid, gname, specie);
 
     populateGroupsWithEfforts();
@@ -160,7 +159,7 @@ function createNewEffortForGroup(s, g) {
 
     // "Effort 3" --- if this is the third effort
     var eName = "Effort " + (1+efLen);
-    ModelAddEffort(s,g, efLen, 0);
+    ModelAddEffort(s,g,0);
     efGUI.domEffort(efLen, eName, g, s, group.efforts);
     // give focus to the new effort (first if newly created)
     if (efLen < 2)

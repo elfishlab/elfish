@@ -151,23 +151,25 @@
       <h1>&nbsp;</h1>
       <hr />
       <h1>Management</h1>
-      <div class="settings-box algorithm">
-        Method:
-        <select name="method" onchange="setMethod(this.selectedIndex);">
-          <option value="cs">Carle &amp; Strub</option>
-          <option value="zippin">Zippin</option>
-        </select>
-      </div>
-      <div class="settings-box confidence-threshold">
-        Confidence threshold (CI/N̂):
-        <input type="range" name="confidence-range" min=1 max=1000
-               onchange="ViewConfidenceRangeChanged(this.value)">
-        <input type="decimal" min=0.001 max=1 name="confidence-val" value="0"
-               onkeyup="ViewConfidenceFieldChanged(this.value)">
-      </div>
-      <div class="settings-box undo">
-        <input type="button" value="Undo"
-               onClick="undo()" />
+      <div class="settings-box">
+        <div class="method">
+          Method:
+          <select name="method" onchange="setMethod(this.selectedIndex);">
+            <option value="cs">Carle &amp; Strub</option>
+            <option value="zippin">Zippin</option>
+          </select>
+        </div>
+        <div class="confidence">
+          Confidence threshold (CI/N̂):
+          <input type="range" name="confidence-range" min=1 max=1000
+                 onchange="ViewConfidenceRangeChanged(this.value)">
+          <input type="decimal" min=0.001 max=1 name="confidence-val" value="0"
+                 onkeyup="ViewConfidenceFieldChanged(this.value)">
+        </div>
+        <div class="undo">
+          <input type="button" value="Undo"
+                 onClick="undo()" />
+        </div>
       </div>
       <input type="button" value="Copy to clipboard"
 	         onClick="androidCopy()" />
