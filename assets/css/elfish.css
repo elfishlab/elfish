@@ -1,7 +1,10 @@
 body {
-    padding: 15px;
+    padding: 0;
+    margin: 0;
     overflow-x: hidden;
     font-size: 16pt;
+    font-family: sans-serif;
+    background-color: #fafafa;
 }
 
 h1, h2, h3, h4, h5, h6, p {
@@ -23,19 +26,104 @@ input[type="number"] {
     font-size: 16pt;
 }
 
-.editable {
-    padding: 15px 5px;
+.shell-top {
+    position: fixed;
+    top: 0;
+    right: 0;
+    left: 0;
+    
+    background-color: #414656;
+    box-shadow: 0 0 4px rgba(0,0,0,0.5);
+    z-index: 3;
+}
+
+.side-stage-trigger {
+    color: white;
+    font-size: 10pt;
+    position: absolute;
+    right: 0;
+    top: 15px;
+    right: 15px;
+}
+
+.side-stage-focused {
+    height: 100%;
+    overflow: hidden;
+}
+
+.app {
+    position: relative;
+    transition: left 0.5s;
+    left: 0;
+}
+
+.side-stage-focused .app {
+    left: -300px;
+    overflow: hidden;
+}
+
+.side-stage {
+    position: absolute;
+    width: 300px;
+    right: -300px;
+    transition: right 0.5s;
+    top: 0;
+    bottom: 0;
+    padding: 50px 10px 0 10px;
+    box-sizing: border-box;
+    background-color: #373F51;
+    color: white;
+}
+
+.side-buttons .pure-button {
+    display: block;
+    margin-bottom: 15px;
+}
+
+.side-stage-focused .side-stage {
+    right: 0;
+}
+
+.app-logo {
+    color: white;
+    font-size: 13pt;
+    padding: 12px 0 10px 15px;
+}
+
+.tabs {
+    padding: 53px 15px 0 15px;
+    background-color: #EBEDF4;
+}
+
+.new-species {
+    display: block;
+    width: 100%;
+    font-size: 75%;
+    border-radius: 5px;
+}
+
+.specie-header {
+    font-size: 9pt;
+    text-transform: uppercase;
+    border-bottom: 1px solid #777;
+    padding: 10px 0;
+    margin: -10px 15px 15px 0;
 }
 
 .tabs-list {
     padding: 0;
+    margin: 15px 0 0 0;
 }
 
 .tabs-list li {
     display: inline-block;
-    margin-right: 15px;
-    padding: 15px;
+    margin-right: 5px;
+    margin-bottom: 10px;
+    padding: 10px;
     border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #fff;
+    font-size: 11pt;
 }
 
 .tabs-list li:hover {
@@ -47,24 +135,32 @@ input[type="number"] {
 }
 
 .tabs-list .active {
-    background: #ccc;
-    border-color: #777;
+    background-color: #373F51;
+    border-color: #1b1b1b;
+    color: #EBEDF4;
 }
 
 .tabs-list .active:hover {
-    background: #ccc;
-    border-color: #777;
+    color: #fff;
+    border: 1px solid #1b1b1b;
 }
 
 .tabs-list .new {
     padding: 0;
     border: none;
 }
+
+.tabs-list .new button {
+    display: block;
+}
+
 .tabs-list .new:hover {
     border: none;
 }
+
 .data {
     position: relative;
+    padding: 15px;
 }
 
 .specie {
@@ -200,7 +296,7 @@ input[type="number"] {
 }
 
 .footer {
-    z-index: 2;
+    
     position: relative;
 }
 
@@ -209,14 +305,14 @@ input[type="number"] {
 }
 
 .settings-box {
-    background-color: #eee;
     font-size: 13pt;
-    margin: 15px 10px 15px 0;
-    padding: 10px;
-    border-radius: 10px;
+    padding: 15px;
+    margin-bottom: 15px;
+    box-sizing: border-box;
     text-align: center;
     max-width: 300px;
     transition: .2s;
+    border-bottom: 1px solid #A9BCD0;
 }
 /*
 .algorithm {
@@ -239,4 +335,36 @@ input[type="number"] {
 
 .confident {
     background: #aea;
+}
+
+.button-xxsmall {
+    font-size: 60%;
+}
+
+.button-xsmall {
+    font-size: 70%;
+}
+
+.button-small {
+    font-size: 85%;
+}
+
+.button-large {
+    font-size: 110%;
+}
+
+.button-xlarge {
+    font-size: 125%;
+}
+
+[contenteditable="true"] {
+    -moz-appearance: textfield;
+    -webkit-appearance: textfield;
+    background-color: white;
+    background-color: -moz-field;
+    border: 1px solid darkgray;
+    box-shadow: 1px 1px 1px 0 lightgray inset;  
+    width: 398px;  
+    padding-left: 10px;
+    padding-right: 10px;
 }
