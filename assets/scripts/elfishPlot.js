@@ -64,11 +64,27 @@ function PlotUpdatePlot(sp, gr) {
             cf.push(ElfishMathConfidenceInterval(arr, window.elfish.method));
         }
     }
+
+    // The next two variables, acc_catch and trunc_cf exist solely to plot the
+    // downwards error line, and we only need trunc_cf (truncated confidence).
+    //
+    // The downwards error line is never "lower" than the total accumulated
+    // catch at a certain point.
+    var acc_catch = [efforts[0].value];
+    for (var idx = 1; idx < est.length; idx++) {
+        acc_catch.push(acc_catch[idx-1] + efforts[idx].value);
+    }
+    var trunc_cf = [];
+    for (var idx = 0; idx < est.length; idx++) {
+        trunc_cf.push(Math.min(cf[idx], est[idx]-acc_catch[idx]));
+    }
+
     // we don't plot the first effort since it has no estimate
     arr.shift();
     labels.shift();
     est.shift();
     cf.shift();
+    trunc_cf.shift();
 
     if (est.length < 2 || allNegative(est))
         return;
@@ -87,7 +103,7 @@ function PlotUpdatePlot(sp, gr) {
                 label: '',
                 data: est,
                 error: cf,
-                errorDir : "both",
+                errorDir : "up",
                 errorStrokeWidth : 1,
                 errorColor: "rgba(220, 70, 50, 1)",
                 errorCapWidth : 0.75,
@@ -95,6 +111,17 @@ function PlotUpdatePlot(sp, gr) {
                 fill: false,      // background color under curve
                 borderColor: "rgba(75,192,192,1)", // line color blueish
                 pointRadius: 2    // size of drawn dots
+            }, {
+                label: '',
+                data: est,
+                error: trunc_cf,
+                errorDir: "down",
+                errorStrokeWidth : 1,
+                errorColor: "rgba(220, 70, 50, 1)",
+                errorCapWidth : 0.75,
+                lineTension: 0.1, // no bezier
+                fill: false,      // background color under curve
+                borderColor: "rgba(0,0,0,0)" // invisible
             }]
         },
         options: {
