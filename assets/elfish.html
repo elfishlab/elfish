@@ -39,7 +39,7 @@
 
     <script type="text/html" id="template-specie">
       <div class="specie" data-species-id="{{specie.id}}">
-        <h2 class="editable"
+        <h2 class="editable specie-header"
 	        data-edit-header="specie"
 	        data-specie-header-specie="{{specie.id}}">
 	      {{specie.title}}
@@ -47,16 +47,15 @@
 	    <div class="specie-groups"
 	         data-species-id="{{specie.id}}">
 	    </div>
-	    <button data-button="group">New group</button>
       </div>
     </script>
 
     <script type="text/html" id="template-tabs">
+      <button class="new-species pure-button-primary pure-button" data-button="species">New species</button>
       <ul class="tabs-list">
         {{#each species}}
         <li data-specie-id="{{@index}}"><a>{{this.name}}</a></li>
         {{/each}}
-        <li class="new"><button data-button="species">+</button></li>
       </ul>
     </script>
 
@@ -140,17 +139,7 @@
 
   </head>
   <body>
-    <div class="app">
-      <h1 class="app-logo">Elfish</h1>
-      <div class="tabs"></div>
-      <div class="data"></div>
-    </div>
-
-    <div class="footer">
-      <!-- / JavaScript / Android bindings -->
-      <h1>&nbsp;</h1>
-      <hr />
-      <h1>Management</h1>
+    <div class="side-stage">
       <div class="settings-box algorithm">
         Method:
         <select name="method" onchange="setMethod(this.selectedIndex);">
@@ -158,6 +147,29 @@
           <option value="zippin">Zippin</option>
         </select>
       </div>
+      <div class="side-buttons">
+        <button class="pure-button button-xxsmall" onClick="androidShare()" >Share</button>
+        <button class="pure-button button-xxsmall" onClick="clearLocalStorage()" >Clear all data</button>
+      </div>
+    </div>
+    <div class="app">
+      <div class="shell-top">
+        <h1 class="app-logo">Elfish</h1>
+        <span class="side-stage-trigger">Menu</span>
+      </div>
+
+      <div class="data"></div>
+      <div class="shell-bottom">
+        <div class="new-group-or-specie">
+          <button class="pure-button pure-button-primary" data-button="group">New specie or group</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer">
+      <!-- / JavaScript / Android bindings -->
+      <h1>Management</h1>
+
       <div class="settings-box confidence-threshold">
         Confidence threshold (CI/N̂):
         <input type="range" name="confidence-range" min=1 max=1000
@@ -165,25 +177,7 @@
         <input type="decimal" min=0.001 max=1 name="confidence-val" value="0"
                onkeyup="ViewConfidenceFieldChanged(this.value)">
       </div>
-      <div class="settings-box undo">
-        <input type="button" value="Undo"
-               onClick="undo()" />
-      </div>
-      <input type="button" value="Copy to clipboard"
-	         onClick="androidCopy()" />
-
-      <input type="button" value="Share"
-	         onClick="androidShare()" />
-
-      <input type="button" value="Write to file"
-	         onClick="androidWrite()" />
-
-      <!-- Local Storage management -->
-      <input type="button" value="Clear"
-	         onClick="clearLocalStorage()" />
-
-      <input type="button" value="Update"
-	         onClick="doUpdate()" />
+      
     </div>
   </body>
 </html>
