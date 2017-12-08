@@ -130,7 +130,10 @@ function ViewSetSummary(elt, sp, gr, numEfforts, est, totalCatch, method) {
     data += "<tr><td>Efforts</td><td>" + numEfforts + "</td></tr>";
     data += "<tr><td>Estimate</td><td>" + est + "</td></tr>";
     data += "<tr><td>Total catch</td><td>" + totalCatch + "</td></tr>";
-    data += "<tr><td>Method</td><td>" + window.elfish.method + "</td></tr>";
+    var meth = "Zippin";
+    if (window.elfish.method == "cs")
+        meth = "Carle&Strub";
+    data += "<tr><td>Method</td><td>" + meth + "</td></tr>";
     data += "</table>";
     elt.innerHTML = data;
     return true;
