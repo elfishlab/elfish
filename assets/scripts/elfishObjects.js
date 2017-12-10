@@ -10,6 +10,15 @@ function guid() {
 
 window.elfish = {data: {}, history: []};
 
+function Undo() {
+    if (window.elfish.history.length == 0) {
+        console.warn("Nothing to undo.");
+        return;
+    }
+    var h = window.elfish.history.pop();
+    h();
+}
+
 function PushHistory(fn) {
     window.elfish.history.push(fn);
 }
