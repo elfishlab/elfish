@@ -1,140 +1,203 @@
-
 function guid() {
-  function s4() {
-    return Math.floor((1 + Math.random()) * 0x10000)
-      .toString(16)
-      .substring(1);
-  }
-  return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
-    s4() + '-' + s4() + s4() + s4();
+    function s4() {
+        return Math.floor((1 + Math.random()) * 0x10000)
+            .toString(16)
+            .substring(1);
+    }
+    return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
+        s4() + '-' + s4() + s4() + s4();
 }
 
-window.elfish = {data: {}}
+window.elfish = {data: {}, history: []};
 
-function PersistantData() {
+function PushHistory(fn) {
+    window.elfish.history.push(fn);
 }
 
-PersistantData.prototype.getId = function() {
+function PersistentObject() {
+    console.info("Initialized new persistent object: ", this._id());
+}
+
+PersistentObject.prototype._id = function() {
     return this.id
 }
 
-PersistantData.prototype.getData = function() {
+PersistentObject.prototype._getData = function() {
     return this.data
 }
 
-PersistantData.prototype.save = function() {
-    this.data["id"] = this.getId();
-    window.elfish.data[this.getId()] = this.getData()
-    console.log("data now", window.elfish.data)
+PersistentObject.prototype._save = function() {
+    this.data["id"] = this._id();
+    window.elfish.data[this._id()] = this._getData();
+    return this;
+}
+
+PersistentObject.prototype._remove = function() {
+    var e = window.elfish.data[this._id()];
+    if (!e) {
+        console.info("removing unsaved item has no effect");
+        return;
+    }
+    window.elfish.data[this._id()] = null;
+    delete window.elfish.data[this._id()];
+    return this;
+}
+
+function _newPersistentObject(proto, id, data) {
+    if (!id) {
+        id = guid();
+    }
+    if (!data) {
+        data = {};
+    }
+    var o = Object.create(proto, {
+        data: {
+            writable: true,
+            value: data
+        },
+        id: {
+            writable: true,
+            value: id
+        }
+    });
+    o.constructor.call(o);
+    return o;
+}
+
+function App() {
+    PersistentObject.call(this);
+    log.info("Creating new Elfish app.");
 }
 
 function Effort() {
-    PersistantData.call(this);
+    PersistentObject.call(this);
 }
 
-Effort.prototype = Object.create(PersistantData.prototype);
+Effort.get = function(effortId) {
+    var e = window.elfish.data[effortId];
+    if (!e) {
+        throw new Error("Effort " + effortId + " dit not exist.");
+    }
+    return _newPersistentObject(Effort.prototype, effortId, e);
+}
+
+Effort.new = function() {
+    return _newPersistentObject(Effort.prototype);
+}
+
+Effort.prototype = Object.create(PersistentObject.prototype);
 Effort.prototype.constructor = Effort;
 
 Effort.prototype.setVal = function(val) {
-    this.val = val;
+    PushHistory(function(v){
+        this.data["val"] = v;
+    }.bind(this, this.getVal()));
+
+    this.data["val"] = val;
+    return this;
 }
 
 Effort.prototype.getVal = function() {
-    return this.val;
+    return this.data["val"];
 }
 
-Effort.prototype.setOrder = function(val) {
-    this.order = val;
+Effort.prototype.setOrder = function(order) {
+    this.data["order"] = order;
+    return this;
 }
 
 Effort.prototype.getOrder = function() {
-    return this.order;
+    return this.data["order"];
 }
 
-Effort.prototype.save = function() {
-    this.data = {
-      order: this.order,
-      val: this.val
-    }
-    PersistantData.prototype.save.call(this)
+Effort.prototype._save = function() {
+    return PersistentObject.prototype._save.call(this);
 }
-
 
 function Group() {
-    PersistantData.call(this);
-    this.data["efforts"] = [];
+    PersistentObject.call(this);
+    if (!this.data["efforts"]) {
+        this.data["efforts"] = [];
+    }
 }
-Group.prototype = Object.create(PersistantData.prototype);
+
+Group.get = function(groupId) {
+    var g = window.elfish.data[groupId];
+    if (!g) {
+        throw new Error("Group " + groupId + " did not exist.");
+    }
+    return _newPersistentObject(Group.prototype, groupId, g);
+}
+
+Group.new = function() {
+    return _newPersistentObject(Group.prototype);
+}
+
+Group.prototype = Object.create(PersistentObject.prototype);
 Group.prototype.constructor = Group;
 
-Group.prototype.addEffort = function(effort) {
-  if (!window.elfish.data[effort.getId()]) {
-      throw new Error("Effort " + effort.getId() + " was not saved.");
+Group.prototype._registerEffort = function(effort) {
+  if (!window.elfish.data[effort._id()]) {
+      throw new Error("Effort " + effort._id() + " was not saved.");
   }
-  this.efforts.push(effort.getId())
+
+  this.data["efforts"].push(effort._id())
+  return this;
 }
 
-Group.prototype.getEfforts = function() {
+Group.prototype._unregisterEffort = function(effort) {
+  if (!window.elfish.data[effort._id()]) {
+      throw new Error("Effort " + effort._id() + " was not saved.");
+  }
+
+  this.data["efforts"].splice(this.data["efforts"].indexOf(effort._id()), 1);
+  return this;
+}
+
+Group.prototype._getEfforts = function() {
     ret = [];
-    effortIds = this.efforts;
+    effortIds = this.data["efforts"];
     for (var i = 0; i < effortIds.length; i++) {
-        ret.push(window.elfish.data[effortIds[i]]);
+        ret.push(Effort.get(effortIds[i]));
     }
     return ret;
 }
 
-Group.prototype.save = function() {
-    this.data = {
-      efforts: this.efforts
-    }
-    PersistantData.prototype.save.call(this)
+Group.prototype.CreateEffort = function() {
+    var e = Effort.new().setOrder(this.data["efforts"].length)._save();
+
+    PushHistory(function(effort) {
+        this._unregisterEffort(effort);
+        effort._remove();
+    }.bind(this, e));
+
+    this._registerEffort(e)._save();
+    return e;
 }
 
-function NewEffort() {
-    return Object.create(Effort.prototype, {
-      data: {
-        writable: true,
-        value: {}
-      },
-      val: {
-        writable: true,
-        value: ""
-      },
-      order: {
-        writable: true,
-        value: ""
-      },
-      id: {
-        writable: false,
-        value: guid()
-      }
-  });
+Group.prototype.RemoveEffort = function(effort) {
+    var e = Effort.get(effort._id());
+    this._unregisterEffort(e);
+    e._remove();
+
+    PushHistory(function(restoredEffort) {
+        restoredEffort._save();
+        this._registerEffort(restoredEffort);
+    }.bind(this, e));
+
+    return this;
 }
 
-function NewGroup() {
-    return Object.create(Group.prototype, {
-        data: {
-          writable: true,
-          value: {}
-        },
-        efforts: {
-          writable: true,
-          value: []
-        },
-        id: {
-          writable: false,
-          value: guid()
-        }
-    });
+Group.prototype._save = function() {
+  return PersistentObject.prototype._save.call(this);
 }
 
-var e = NewEffort();
-// console.log(e.getId())
-e.setVal(17)
-e.save()
-
-var g = NewGroup();
-// console.log(g)
-g.addEffort(e);
-console.log(g.getEfforts())
-g.save();
+Group.prototype.MoveEffortToGroup = function(effort, group) {
+    this._unregisterEffort(effort);
+    group._registerEffort(effort);
+    
+    PushHistory(function(to, effort) {
+        this._unregisterEffort(effort);
+        to._registerEffort(effort);
+    }.bind(group, this, effort));
+}
